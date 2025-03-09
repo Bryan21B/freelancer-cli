@@ -40,7 +40,8 @@
     "commander": "^13.1.0",
     "conf": "^13.1.0",
     "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.40.0"
+    "drizzle-orm": "^0.40.0",
+    "execa": "^9.5.2"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
