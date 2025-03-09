@@ -3,7 +3,7 @@
 import { Command } from "commander";
 
 const program = new Command();
-const version: string = "0.0.1";
+const version: string = "0.0.2";
 
 program
   .name("freelancer-cli")
