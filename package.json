@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
+  "bin": "./dist/index.js",
   "scripts": {
     "test": "vitest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "fix-link": "pnpm unlink && pnpm link"
   },
   "keywords": [],
   "author": "",
