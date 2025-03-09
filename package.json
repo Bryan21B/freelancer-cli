@@ -15,7 +15,6 @@
   "packageManager": "pnpm@10.6.1",
   "devDependencies": {
     "@eslint/js": "^9.22.0",
-    "@types/commander": "^2.12.5",
     "@types/node": "^22.13.10",
     "@types/validator": "^13.12.2",
     "cz-conventional-changelog": "^3.3.0",
