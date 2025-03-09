@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import chalk from "chalk";
 import { config } from "../utils/cli-config.js";
 
 export const initCommand = new Command()
@@ -6,16 +7,6 @@ export const initCommand = new Command()
   .description("Set up the initial parameters")
   .action(() => {
     config.clear();
-    config.set({
-      firstName: "Bryan",
-      lastName: "Blanchot",
-      email: "bryan.blanchot@gmail.com",
-      address: {
-        street: "142 rue du faubourg saint denis",
-        city: "Paris",
-        zipCode: "75010",
-        country: "France",
-      },
-    });
-    console.log("You're all set");
+    // Set config here
+    console.log(chalk.green("You're all set!"));
   });
