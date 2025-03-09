@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c63fd9d8-b5a6-48d8-b25c-1ec06615fdf6",
+  "id": "c142ef56-65fb-488c-a2e4-83c2bd31d1b9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "companies_table": {

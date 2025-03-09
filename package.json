@@ -7,7 +7,8 @@
   "scripts": {
     "test": "vitest",
     "prepare": "husky",
-    "fix-link": "pnpm unlink && pnpm link"
+    "fix-link": "pnpm unlink && pnpm link",
+    "migrate": "npx drizzle-kit generate --config=./config/drizzle.config.ts && npx drizzle-kit migrate --config=./config/drizzle.config.ts"
   },
   "keywords": [],
   "author": "",
