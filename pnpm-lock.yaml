@@ -27,6 +27,9 @@ importers:
       '@eslint/js':
         specifier: ^9.22.0
         version: 9.22.0
+      '@types/commander':
+        specifier: ^2.12.5
+        version: 2.12.5
       '@types/node':
         specifier: ^22.13.10
         version: 22.13.10
@@ -704,6 +707,10 @@ packages:
     resolution: {integrity: sha512-PIQeY5XDkrOysbQblSW7v3l1MDZzkTEzAfTPkj5VAu3FW8fS4ynyLg2sINp0fp3SjZ8xkRYpLqoKcYqAkhU1dw==}
     cpu: [x64]
     os: [win32]
+
+  '@types/commander@2.12.5':
+    resolution: {integrity: sha512-YXGZ/rz+s57VbzcvEV9fUoXeJlBt5HaKu5iUheiIWNsJs23bz6AnRuRiZBRVBLYyPnixNvVnuzM5pSaxr8Yp/g==}
+    deprecated: This is a stub types definition. commander provides its own type definitions, so you do not need this installed.
 
   '@types/conventional-commits-parser@5.0.1':
     resolution: {integrity: sha512-7uz5EHdzz2TqoMfV7ee61Egf5y6NkcO4FB/1iCCQnbeiI1F3xzv3vK5dBCXUCLQgGYS+mUeigK1iKQzvED+QnQ==}
@@ -2331,6 +2338,10 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.35.0':
     optional: true
+
+  '@types/commander@2.12.5':
+    dependencies:
+      commander: 13.1.0
 
   '@types/conventional-commits-parser@5.0.1':
     dependencies:
