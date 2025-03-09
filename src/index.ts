@@ -1,2 +1,3 @@
-const greeting: string = "hello there";
-console.log(greeting);
+export function sayHello() {
+  console.log("Hello");
+}
