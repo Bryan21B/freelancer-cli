@@ -4,7 +4,7 @@ import { config } from "../utils/cli-config.js";
 
 export const initCommand = new Command()
   .command("init")
-  .description("Set up the initial parameters")
+  .description("set up the initial config")
   .action(() => {
     config.clear();
     // Set config here
