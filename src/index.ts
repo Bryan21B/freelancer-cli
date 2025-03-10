@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
+import { initCommand } from "./commands/init.js";
 
 const program = new Command();
-<<<<<<< HEAD
-const version: string = "0.0.1";
-=======
-const version: string = "0.0.2";
->>>>>>> release/0.0.2
+const version: string = "0.0.3";
 
 program
   .name("freelancer-cli")
@@ -16,4 +13,5 @@ program
     "CLI for freelancers to manage the admin side of their business."
   );
 
+program.addCommand(initCommand);
 program.parse(process.argv);

@@ -1,5 +1,8 @@
 {
   "files.exclude": {
     "**/*.js: { \"when\": \"$(basename).ts\" }": true
-  }
+  },
+  "prettier.configPath": "config/.prettierrc",
+  "prettier.requireConfig": true,
+  "eslint.options": { "overrideConfigFile": "config/eslint.config.mjs" }
 }
