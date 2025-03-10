@@ -4,7 +4,7 @@ import { client } from "./clients";
 import { project } from "./projects";
 import { sql } from "drizzle-orm";
 
-export const invoice = sqliteTable("companies_table", {
+export const invoice = sqliteTable("invoices_table", {
   id: int().primaryKey({ autoIncrement: true }),
   totalCost: int().notNull(),
   dueDate: integer({ mode: "timestamp_ms" }).notNull(),
@@ -15,7 +15,8 @@ export const invoice = sqliteTable("companies_table", {
   validatedAt: integer({ mode: "boolean" }),
   updatedAt: integer({ mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`),
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => new Date()),
   archivedAt: integer({ mode: "timestamp_ms" }),
   isArchived: integer({ mode: "boolean" }).notNull().default(false),
   clientId: integer().references(() => client.id),

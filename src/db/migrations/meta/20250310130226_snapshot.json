@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8fd41941-7dc5-4d33-8fcc-f673a41042cf",
+  "id": "019c0c8d-1319-4a61-badd-3644ec37dcb1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "companies_table": {
@@ -14,22 +14,8 @@
           "notNull": true,
           "autoincrement": true
         },
-        "totalCost": {
-          "name": "totalCost",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "dueDate": {
-          "name": "dueDate",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "status": {
-          "name": "status",
+        "projectName": {
+          "name": "projectName",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -42,13 +28,6 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(CURRENT_TIMESTAMP)"
-        },
-        "validatedAt": {
-          "name": "validatedAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         },
         "updatedAt": {
           "name": "updatedAt",

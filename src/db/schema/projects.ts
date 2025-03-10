@@ -3,7 +3,7 @@ import { int, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { client } from "./clients";
 import { sql } from "drizzle-orm";
 
-export const project = sqliteTable("companies_table", {
+export const project = sqliteTable("projects_table", {
   id: int().primaryKey({ autoIncrement: true }),
   projectName: text().notNull(),
 
@@ -12,7 +12,8 @@ export const project = sqliteTable("companies_table", {
     .default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: integer({ mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`),
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => new Date()),
   archivedAt: integer({ mode: "timestamp_ms" }),
   isArchived: integer({ mode: "boolean" }).notNull().default(false),
   clientId: integer().references(() => client.id),
