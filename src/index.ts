@@ -4,7 +4,7 @@ import { Command } from "commander";
 import { initCommand } from "./commands/init.js";
 
 const program = new Command();
-const version: string = "0.0.2";
+const version: string = "0.0.3";
 
 program
   .name("freelancer-cli")
