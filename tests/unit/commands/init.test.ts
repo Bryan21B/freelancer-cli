@@ -1,7 +1,6 @@
 import { ExecaError, execa } from "execa";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { CLI_PATH } from "../utils/utils";
 import { config } from "../../../src/utils/cli-config";
 
 describe("the init command", () => {
@@ -11,7 +10,9 @@ describe("the init command", () => {
   });
 
   it("should inform the user that the config is setup", async () => {
-    const { stdout } = await execa("tsx", [CLI_PATH, "init"], { shell: true });
+    const { stdout } = await execa("tsx", ["src/index.ts", "init"], {
+      shell: true,
+    });
 
     // Verify the command output
     expect(stdout).toContain("You're all set");
@@ -19,7 +20,7 @@ describe("the init command", () => {
 
   it("should handle errors gracefully", async () => {
     try {
-      await execa("tsx", [CLI_PATH, "init", "--invalid-flag"], {
+      await execa("tsx", ["src/index.ts", "init", "--invalid-flag"], {
         shell: true,
       });
       throw new Error("Should have failed with invalid flag");
