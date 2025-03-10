@@ -1,11 +1,11 @@
 {
   "name": "freelancer-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
   "scripts": {
-    "test": "vitest --config ./config/vitest.config.mts",
+    "test": "vitest run --config ./config/vitest.config.mts",
     "prepare": "husky",
     "fix-link": "pnpm unlink && pnpm link",
     "build": "rm -rf dist && tsc --build --force ",
