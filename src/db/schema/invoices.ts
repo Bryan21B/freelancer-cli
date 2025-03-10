@@ -1,6 +1,7 @@
 import { int, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { client } from "./clients";
+import { project } from "./projects";
 import { sql } from "drizzle-orm";
 
 export const invoice = sqliteTable("companies_table", {
@@ -18,4 +19,5 @@ export const invoice = sqliteTable("companies_table", {
   archivedAt: integer({ mode: "timestamp_ms" }),
   isArchived: integer({ mode: "boolean" }).notNull().default(false),
   clientId: integer().references(() => client.id),
+  projectId: integer().references(() => project.id),
 });
