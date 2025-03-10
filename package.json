@@ -5,9 +5,12 @@
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest --config ./config/vitest.config.mts",
     "prepare": "husky",
-    "fix-link": "pnpm unlink && pnpm link"
+    "fix-link": "pnpm unlink && pnpm link",
+    "build": "rm -rf dist && tsc --build --force ",
+    "migrate": "pnpm build && npx drizzle-kit generate --config=./config/drizzle.config.ts && npx drizzle-kit migrate --config=./config/drizzle.config.ts",
+    "wipe-db": "rm -rf freelancer-cli.db && rm -rf src/db/migrations"
   },
   "keywords": [],
   "author": "",
