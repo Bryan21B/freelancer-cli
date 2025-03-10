@@ -11,7 +11,7 @@ describe("the init command", () => {
   });
 
   it("should inform the user that the config is setup", async () => {
-    const { stdout } = await execa("node", [CLI_PATH, "init"], { shell: true });
+    const { stdout } = await execa("tsx", [CLI_PATH, "init"], { shell: true });
 
     // Verify the command output
     expect(stdout).toContain("You're all set");
@@ -19,7 +19,7 @@ describe("the init command", () => {
 
   it("should handle errors gracefully", async () => {
     try {
-      await execa("node", [CLI_PATH, "init", "--invalid-flag"], {
+      await execa("tsx", [CLI_PATH, "init", "--invalid-flag"], {
         shell: true,
       });
       throw new Error("Should have failed with invalid flag");
