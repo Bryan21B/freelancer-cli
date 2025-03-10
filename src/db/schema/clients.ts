@@ -1,32 +1,32 @@
-import { int, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { relations, sql } from "drizzle-orm";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+import { baseFields } from "./base";
 import { invoices } from "./invoices";
 import { projects } from "./projects";
+import { relations } from "drizzle-orm";
 
 export const clients = sqliteTable("clients_table", {
-  id: int().primaryKey({ autoIncrement: true }),
-  firstName: text().notNull(),
-  lastName: text().notNull(),
-  companyName: text().notNull(),
-  email: text().unique(),
-  addressStreet: text(),
-  addressCity: text(),
-  addressZip: text(),
-  phoneCountryCode: text(),
-  phoneNumber: text(),
-  createdAt: integer({ mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: integer({ mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .$onUpdate(() => new Date()),
-  archivedAt: integer({ mode: "timestamp_ms" }),
-  isArchived: integer({ mode: "boolean" }).notNull().default(false),
+  ...baseFields,
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  companyName: text("company_name").notNull(),
+  email: text("email").unique(),
+  addressStreet: text("address_street"),
+  addressCity: text("address_city"),
+  addressZip: text("address_zip"),
+  phoneCountryCode: text("phone_country_code"),
+  phoneNumber: text("phone_number"),
 });
 
 export const clientRelations = relations(clients, ({ many }) => ({
-  projects: many(projects),
-  invoices: many(invoices),
+  projects: many(projects, {
+    fields: [clients.id],
+    references: [projects.clientId],
+    relationName: "client_projects",
+  }),
+  invoices: many(invoices, {
+    fields: [clients.id],
+    references: [invoices.clientId],
+    relationName: "client_invoices",
+  }),
 }));

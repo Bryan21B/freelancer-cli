@@ -1,26 +1,23 @@
-import { int, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { relations, sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+import { baseFields } from "./base";
 import { clients } from "./clients";
 import { invoices } from "./invoices";
+import { relations } from "drizzle-orm";
 
 export const projects = sqliteTable("projects_table", {
-  id: int().primaryKey({ autoIncrement: true }),
-  projectName: text().notNull(),
-
-  createdAt: integer({ mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: integer({ mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .$onUpdate(() => new Date()),
-  archivedAt: integer({ mode: "timestamp_ms" }),
-  isArchived: integer({ mode: "boolean" }).notNull().default(false),
+  ...baseFields,
+  name: text("name").notNull(),
+  description: text("description"),
+  startDate: integer("start_date", { mode: "timestamp" }).notNull(),
+  endDate: integer("end_date", { mode: "timestamp" }),
   clientId: integer("client_id").references(() => clients.id),
 });
 
-export const projectRelations = relations(projects, ({ many, one }) => ({
+export const projectRelations = relations(projects, ({ one, many }) => ({
+  client: one(clients, {
+    fields: [projects.clientId],
+    references: [clients.id],
+  }),
   invoices: many(invoices),
-  client: one(clients),
 }));
