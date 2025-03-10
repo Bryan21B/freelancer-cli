@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { config } from "../../../src/utils/cli-config";
 
+const CLI_PATH = "src/index.ts";
+
 describe("the init command", () => {
   beforeEach(() => {
     // Clear the config before each test
@@ -10,7 +12,7 @@ describe("the init command", () => {
   });
 
   it("should inform the user that the config is setup", async () => {
-    const { stdout } = await execa("tsx", ["src/index.ts", "init"], {
+    const { stdout } = await execa("tsx", [CLI_PATH, "init"], {
       shell: true,
     });
 
@@ -20,7 +22,7 @@ describe("the init command", () => {
 
   it("should handle errors gracefully", async () => {
     try {
-      await execa("tsx", ["src/index.ts", "init", "--invalid-flag"], {
+      await execa("tsx", [CLI_PATH, "init", "--invalid-flag"], {
         shell: true,
       });
       throw new Error("Should have failed with invalid flag");
