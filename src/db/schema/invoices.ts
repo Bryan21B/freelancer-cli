@@ -1,8 +1,8 @@
 import { int, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { relations, sql } from "drizzle-orm";
 
 import { client } from "./clients";
 import { project } from "./projects";
-import { sql } from "drizzle-orm";
 
 export const invoice = sqliteTable("invoices_table", {
   id: int().primaryKey({ autoIncrement: true }),
@@ -19,6 +19,10 @@ export const invoice = sqliteTable("invoices_table", {
     .$onUpdate(() => new Date()),
   archivedAt: integer({ mode: "timestamp_ms" }),
   isArchived: integer({ mode: "boolean" }).notNull().default(false),
-  clientId: integer().references(() => client.id),
-  projectId: integer().references(() => project.id),
+  clientId: integer("client_id").references(() => client.id),
+  projectId: integer("project_id").references(() => project.id),
 });
+
+export const invoiceRelations = relations(invoice, ({ one }) => ({
+  client: one(client),
+}));
