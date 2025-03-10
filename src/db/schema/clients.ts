@@ -1,10 +1,10 @@
 import { int, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { relations, sql } from "drizzle-orm";
 
-import { invoice } from "./invoices";
-import { project } from "./projects";
+import { invoices } from "./invoices";
+import { projects } from "./projects";
 
-export const client = sqliteTable("clients_table", {
+export const clients = sqliteTable("clients_table", {
   id: int().primaryKey({ autoIncrement: true }),
   firstName: text().notNull(),
   lastName: text().notNull(),
@@ -26,7 +26,7 @@ export const client = sqliteTable("clients_table", {
   isArchived: integer({ mode: "boolean" }).notNull().default(false),
 });
 
-export const clientRelations = relations(client, ({ many }) => ({
-  projects: many(project),
-  invoices: many(invoice),
+export const clientRelations = relations(clients, ({ many }) => ({
+  projects: many(projects),
+  invoices: many(invoices),
 }));
