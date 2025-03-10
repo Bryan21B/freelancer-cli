@@ -3,7 +3,7 @@ import { int, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const client = sqliteTable("companies_table", {
-  clientId: int().primaryKey({ autoIncrement: true }),
+  id: int().primaryKey({ autoIncrement: true }),
   firstName: text().notNull(),
   lastName: text().notNull(),
   companyName: text().notNull(),
