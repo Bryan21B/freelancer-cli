@@ -10,9 +10,9 @@ export const clients = sqliteTable("clients_table", {
   lastName: text().notNull(),
   companyName: text().notNull(),
   email: text().unique(),
-  address_street: text(),
-  address_city: text(),
-  address_zip: text(),
+  addressStreet: text(),
+  addressCity: text(),
+  addressZip: text(),
   phoneCountryCode: text(),
   phoneNumber: text(),
   createdAt: integer({ mode: "timestamp_ms" })
