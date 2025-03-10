@@ -1,8 +1,8 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-import { baseFields } from "./base";
-import { invoices } from "./invoices";
-import { projects } from "./projects";
+import { baseFields } from "./base.js";
+import { invoices } from "./invoices.js";
+import { projects } from "./projects.js";
 import { relations } from "drizzle-orm";
 
 export const clients = sqliteTable("clients_table", {
@@ -19,14 +19,6 @@ export const clients = sqliteTable("clients_table", {
 });
 
 export const clientRelations = relations(clients, ({ many }) => ({
-  projects: many(projects, {
-    fields: [clients.id],
-    references: [projects.clientId],
-    relationName: "client_projects",
-  }),
-  invoices: many(invoices, {
-    fields: [clients.id],
-    references: [invoices.clientId],
-    relationName: "client_invoices",
-  }),
+  projects: many(projects),
+  invoices: many(invoices),
 }));

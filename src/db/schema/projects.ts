@@ -1,8 +1,8 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-import { baseFields } from "./base";
-import { clients } from "./clients";
-import { invoices } from "./invoices";
+import { baseFields } from "./base.js";
+import { clients } from "./clients.js";
+import { invoices } from "./invoices.js";
 import { relations } from "drizzle-orm";
 
 export const projects = sqliteTable("projects_table", {

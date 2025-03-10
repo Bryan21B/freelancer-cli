@@ -1,11 +1,11 @@
 import "dotenv/config";
 
-import { DBClient, DBInvoice, DBProject } from "../types/db_types";
+import { DBClient, DBInvoice, DBProject } from "../types/db_types.js";
 
-import { clients } from "./schema/clients";
+import { clients } from "./schema/clients.js";
 import { drizzle } from "drizzle-orm/libsql";
-import { invoices } from "./schema/invoices";
-import { projects } from "./schema/projects";
+import { invoices } from "./schema/invoices.js";
+import { projects } from "./schema/projects.js";
 
 export const db = drizzle({
   connection: process.env.DB_FILE_NAME!,
