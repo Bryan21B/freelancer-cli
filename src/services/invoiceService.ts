@@ -6,7 +6,7 @@ import {
 } from "../types/models";
 
 import { Prisma } from "@prisma/client";
-import { db } from "../prisma/index";
+import db from "../prisma/index";
 import { z } from "zod";
 
 type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;

@@ -1,7 +1,7 @@
 import { Client, NewClient, newClientSchema } from "../types/models";
 
 import { Prisma } from "@prisma/client";
-import { db } from "../../prisma/index";
+import db from "../../prisma/index";
 import { z } from "zod";
 
 export const createClient = async (client: NewClient): Promise<Client> => {
