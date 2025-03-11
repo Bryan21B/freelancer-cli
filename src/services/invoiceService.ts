@@ -1,11 +1,11 @@
 import {
   Invoice,
   NewInvoice,
-  invoiceSchema,
   invoiceStatusSchema,
   newInvoiceSchema,
 } from "../types/models";
 
+import { Prisma } from "@prisma/client";
 import { db } from "../prisma/index";
 import { z } from "zod";
 
@@ -21,8 +21,10 @@ export const createInvoice = async (invoice: NewInvoice): Promise<Invoice> => {
     if (error instanceof z.ZodError) {
       throw new Error(`Invalid invoice data: ${error.message}`);
     }
-    if (error.code === "P2002") {
-      throw new Error("An invoice with this number already exists");
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        throw new Error("An invoice with this number already exists");
+      }
     }
     throw error;
   }
@@ -51,34 +53,26 @@ export const getInvoiceByNumber = async (
 export const archiveInvoiceById = async (
   invoiceId: Invoice["id"]
 ): Promise<Invoice> => {
-  try {
-    const archivedInvoice = await db.invoice.update({
-      where: { id: invoiceId },
-      data: { isArchived: true, archivedAt: new Date() },
-    });
-    return archivedInvoice;
-  } catch (error) {
-    if (error.code === "P2001") {
-      throw new Error("The invoice could not be found");
-    }
-    throw error;
+  const invoice = await db.invoice.findUnique({ where: { id: invoiceId } });
+  if (!invoice) {
+    throw new Error("Invoice not found");
   }
+  return await db.invoice.update({
+    where: { id: invoiceId },
+    data: { isArchived: true, archivedAt: new Date() },
+  });
 };
 
 export const updateInvoiceStatusById = async (
   invoiceId: Invoice["id"],
   status: InvoiceStatus
 ): Promise<Invoice> => {
-  try {
-    const updatedInvoice = await db.invoice.update({
-      where: { id: invoiceId },
-      data: { status: status },
-    });
-    return updatedInvoice;
-  } catch (error) {
-    if (error.code === "P2001") {
-      throw new Error("The invoice could not be found");
-    }
-    throw error;
+  const invoice = await db.invoice.findUnique({ where: { id: invoiceId } });
+  if (!invoice) {
+    throw new Error("Invoice not found");
   }
+  return await db.invoice.update({
+    where: { id: invoiceId },
+    data: { status },
+  });
 };
