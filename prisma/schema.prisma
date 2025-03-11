@@ -7,6 +7,14 @@ generator client {
   output   = "../node_modules/.prisma/client" 
 }
 
+enum InvoiceStatus {
+  DRAFT
+  VALIDATED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
 model Client {
   id Int @id @default(autoincrement()) 
   createdAt DateTime @default(now())
@@ -33,7 +41,7 @@ model Invoice {
   invoiceNumber Int @unique
   totalCost Int
   dueDate DateTime
-  status String
+  status InvoiceStatus @default(DRAFT)
   validatedAt DateTime?
   client Client @relation(fields: [clientId], references: [id])
   clientId Int
