@@ -1,5 +1,3 @@
-// src/types/index.ts
-
 // Base type for common fields
 interface BaseEntity {
   id: number;
