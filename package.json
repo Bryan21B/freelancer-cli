@@ -5,7 +5,7 @@
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
   "scripts": {
-    "test": "vitest run --config ./config/vitest.config.mts",
+    "test": "vitest run --config ./config/vitest.config.mts --reporter=verbose",
     "prepare": "husky",
     "fix-link": "pnpm unlink && pnpm link",
     "build": "rm -rf dist && tsc --build --force ",

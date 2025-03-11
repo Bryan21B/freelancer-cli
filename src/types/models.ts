@@ -103,7 +103,11 @@ export type NewClient = Partial<z.infer<typeof newClientSchema>> & {
 };
 
 export type NewInvoice = z.infer<typeof newInvoiceSchema>;
-export type NewProject = z.infer<typeof newProjectSchema>;
+export type NewProject = Partial<z.infer<typeof newProjectSchema>> & {
+  name: string;
+  clientId: number;
+  startDate: Date;
+};
 
 // Export Prisma types directly
 export type { Client, Invoice, Project };

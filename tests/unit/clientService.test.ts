@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { NewClient } from "../../src/types/models";
 import { createClient } from "../../src/services/clientService";
 
 vi.mock("@prisma/client");
@@ -33,6 +34,19 @@ describe("createClient", () => {
     // Prismock limitation: updatedAt might be null even though schema has @updatedAt
     expect(client.updatedAt === null || client.updatedAt instanceof Date).toBe(
       true
+    );
+  });
+
+  it("should throw an error when required data is missing", async () => {
+    const invalidClient: Partial<NewClient> = {
+      firstName: "Bryan",
+      companyName: "Bryan Blanchot",
+      email: "bryan.blanchot@gmail.com",
+      // lastName is missing
+    };
+
+    await expect(createClient(invalidClient as NewClient)).rejects.toThrow(
+      "Invalid client data"
     );
   });
 });
