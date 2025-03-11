@@ -43,7 +43,7 @@ export const endProject = async (project: Project): Promise<Project> => {
   });
 };
 
-export const archiveProject = async (project: Project): Promise<null> => {
+export const archiveProject = async (project: Project): Promise<Project> => {
   const archiveInvoices = db.invoice.updateMany({
     where: { projectId: project.id },
     data: { isArchived: true, archivedAt: new Date() },
@@ -53,12 +53,12 @@ export const archiveProject = async (project: Project): Promise<null> => {
     data: { isArchived: true, archivedAt: new Date() },
   });
   await db.$transaction([archiveInvoices, archiveProject]);
-  return null;
+  return archiveProject;
 };
 
 export const archiveProjectById = async (
   projectId: Project["id"]
-): Promise<null> => {
+): Promise<Project> => {
   const archiveInvoices = db.invoice.updateMany({
     where: { projectId: projectId },
     data: { isArchived: true, archivedAt: new Date() },
@@ -68,5 +68,5 @@ export const archiveProjectById = async (
     data: { isArchived: true, archivedAt: new Date() },
   });
   await db.$transaction([archiveInvoices, archiveProject]);
-  return null;
+  return archiveProject;
 };
