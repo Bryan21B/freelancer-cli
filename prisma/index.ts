@@ -2,9 +2,7 @@ import "dotenv/config";
 
 import { PrismaClient } from "@prisma/client";
 
-const db = new PrismaClient();
-
-export default db;
+export const db = new PrismaClient();
 
 // const newClient: Client = {
 //   firstName: "Bryan",
