@@ -10,7 +10,7 @@
     "fix-link": "pnpm unlink && pnpm link",
     "build": "rm -rf dist && tsc --build --force ",
     "wipe-db": "rm -rf freelancer-cli.db && rm -rf src/db/migrations",
-    "prisma:generate": "prisma generate"
+    "migrate": "pnpm prisma generate && pnpm prisma migrate dev"
   },
   "keywords": [],
   "author": "",
