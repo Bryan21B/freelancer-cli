@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id               Int       @id @default(autoincrement())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  firstName        String
+  lastName         String
+  companyName      String
+  email            String    @unique
+  addressCity      String?
+  addressZip       String?
+  addressStreet    String?
+  phoneCountryCode String?
+  phoneNumber      String?
+  archivedAt       DateTime?
+  isArchived       Boolean   @default(false)
+  invoices         Invoice[]
+  projects         Project[]
+}
+
+enum InvoiceStatus {
+  DRAFT
+  VALIDATED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model Invoice {
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  invoiceNumber Int       @unique
+  totalCost     Int
+  dueDate       DateTime
+  status        InvoiceStatus @default(DRAFT)
+  validatedAt   DateTime?
+  clientId      Int
+  projectId     Int
+  archivedAt    DateTime?
+  isArchived    Boolean   @default(false)
+  project       Project   @relation(fields: [projectId], references: [id])
+  client        Client    @relation(fields: [clientId], references: [id])
+}
+
+model Project {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  archivedAt  DateTime
+  isArchived  Boolean   @default(false)
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  clientId    Int
+  invoices    Invoice[]
+  client      Client    @relation(fields: [clientId], references: [id])
+}
