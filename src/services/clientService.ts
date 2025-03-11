@@ -23,11 +23,67 @@ export const createClient = async (client: NewClient): Promise<Client> => {
   }
 };
 
-// export const archiveClientById = async (clientId: Client["id"]) => {
-//   try {
-//     const archivedClient = await db.client.update({
-//       where: { id: clientId },
-//       data: { isArchived: true, archivedAt: new Date() },
-//     });
-//   } catch (error) {}
-// };
+export const getClientById = async (
+  clientId: Client["id"]
+): Promise<Client> => {
+  return await db.client.findUniqueOrThrow({ where: { id: clientId } });
+};
+
+export const getAllClients = async (): Promise<Client[]> => {
+  return await db.client.findMany();
+};
+
+export const updateClient = async (
+  clientId: Client["id"],
+  client: NewClient
+): Promise<Client> => {
+  return await db.client.update({ where: { id: clientId }, data: client });
+};
+
+export const archiveClient = async (client: Client): Promise<Client> => {
+  const archiveInvoices = db.invoice.updateMany({
+    where: { clientId: client.id },
+    data: { isArchived: true, archivedAt: new Date() },
+  });
+
+  const archiveProjects = db.project.updateMany({
+    where: { clientId: client.id },
+    data: {
+      isArchived: true,
+      archivedAt: new Date(),
+    },
+  });
+
+  const archiveClient = db.client.update({
+    where: { id: client.id },
+    data: { isArchived: true, archivedAt: new Date() },
+  });
+
+  await db.$transaction([archiveInvoices, archiveProjects, archiveClient]);
+  return archiveClient;
+};
+
+export const archiveClientById = async (
+  clientId: Client["id"]
+): Promise<Client> => {
+  const archiveInvoices = db.invoice.updateMany({
+    where: { clientId: clientId },
+    data: { isArchived: true, archivedAt: new Date() },
+  });
+
+  const archiveProjects = db.project.updateMany({
+    where: { clientId: clientId },
+    data: {
+      isArchived: true,
+      archivedAt: new Date(),
+    },
+  });
+
+  const archiveClient = db.client.update({
+    where: { id: clientId },
+    data: { isArchived: true, archivedAt: new Date() },
+  });
+
+  await db.$transaction([archiveInvoices, archiveProjects, archiveClient]);
+  return archiveClient;
+};
