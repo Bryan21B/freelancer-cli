@@ -9,8 +9,8 @@
     "prepare": "husky",
     "fix-link": "pnpm unlink && pnpm link",
     "build": "rm -rf dist && tsc --build --force ",
-    "migrate": "pnpm build && npx drizzle-kit generate --config=./config/drizzle.config.ts && npx drizzle-kit migrate --config=./config/drizzle.config.ts",
-    "wipe-db": "rm -rf freelancer-cli.db && rm -rf src/db/migrations"
+    "wipe-db": "rm -rf freelancer-cli.db && rm -rf src/db/migrations",
+    "prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +26,7 @@
     "eslint-config-prettier": "^10.1.1",
     "globals": "^16.0.0",
     "husky": "^9.1.7",
+    "prisma": "^6.4.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.0",
@@ -38,20 +39,23 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.10.0",
-    "@libsql/client": "^0.14.0",
+    "@prisma/client": "^6.4.1",
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "conf": "^13.1.0",
     "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.40.0",
     "execa": "^9.5.2"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@prisma/client",
       "esbuild",
       "sqlite3"
     ],
-    "overrides": {}
+    "overrides": {},
+    "ignoredBuiltDependencies": [
+      "@prisma/client"
+    ]
   },
   "type": "module"
 }
