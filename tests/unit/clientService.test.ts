@@ -68,9 +68,9 @@ describe("Client Service", () => {
 
     beforeAll(async () => {
       const newClient = createClientData();
-      testClient = await createClient(newClient);
+      testClient = await db.client.create({ data: newClient });
       const newClient2 = createClientData();
-      await createClient(newClient2);
+      await db.client.create({ data: newClient2 });
     });
 
     it("should return the correct client", async () => {
@@ -102,9 +102,9 @@ describe("Client Service", () => {
       const newClient3 = createClientData({ firstName: "Third" });
 
       testClients = await Promise.all([
-        createClient(newClient1),
-        createClient(newClient2),
-        createClient(newClient3),
+        db.client.create({ data: newClient1 }),
+        db.client.create({ data: newClient2 }),
+        db.client.create({ data: newClient3 }),
       ]);
     });
 
@@ -125,7 +125,7 @@ describe("Client Service", () => {
 
     beforeAll(async () => {
       const newClient = createClientData();
-      testClient = await createClient(newClient);
+      testClient = await db.client.create({ data: newClient });
     });
 
     it("should return a client with updated details", async () => {
