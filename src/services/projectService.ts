@@ -1,7 +1,8 @@
+import { Client, Invoice, Prisma } from "@prisma/client";
 import { NewProject, Project, newProjectSchema } from "../types/models";
 
-import { Prisma } from "@prisma/client";
 import { db } from "../prisma/index";
+import { isEmpty } from "lodash";
 import { z } from "zod";
 
 export const createProject = async (project: NewProject): Promise<Project> => {
@@ -29,7 +30,37 @@ export const getProjectById = async (
   return await db.project.findUniqueOrThrow({ where: { id: projectId } });
 };
 
-export const updateProject = async (
+export const getProjectsByClientId = async (
+  clientId: Client["id"]
+): Promise<Project[]> => {
+  const projects = await db.project.findMany({ where: { clientId: clientId } });
+  if (!projects) {
+    throw new Error("No projects found for that client");
+  }
+  return projects;
+};
+
+export const getProjectByInvoiceID = async (
+  invoiceId: Invoice["id"]
+): Promise<Project> => {
+  const project = await db.project.findFirstOrThrow({
+    where: { invoices: { some: { id: invoiceId } } },
+  });
+  if (!project) {
+    throw new Error("No project found for that invoice");
+  }
+  return project;
+};
+
+export const getAllProjects = async (): Promise<Project[]> => {
+  const projects = await db.project.findMany();
+  if (isEmpty(projects)) {
+    throw new Error("No projects found");
+  }
+  return projects;
+};
+
+export const updateProjectById = async (
   projectId: Project["id"],
   project: NewProject
 ) => {
