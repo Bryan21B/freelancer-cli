@@ -38,9 +38,9 @@ export const getAllClients = async (): Promise<Client[]> => {
   return clients;
 };
 
-export const updateClient = async (
+export const updateClientById = async (
   clientId: Client["id"],
-  client: NewClient
+  client: Partial<NewClient>
 ): Promise<Client> => {
   return await db.client.update({ where: { id: clientId }, data: client });
 };

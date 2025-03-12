@@ -1,12 +1,18 @@
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  archiveClientById,
   createClient,
   getAllClients,
   getClientById,
+  updateClientById,
 } from "../../src/services/clientService";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  createClientWithInvoicesAndProjects,
+  setupTestDb,
+} from "../helpers/testUtils";
 
-import { createClientData } from "../helpers/clientFactory";
-import { setupTestDb } from "../helpers/testUtils";
+import { createClientData } from "../helpers";
+import { db } from "../../prisma";
 
 vi.mock("@prisma/client");
 
@@ -110,7 +116,107 @@ describe("Client Service", () => {
 
     it("should throw when there are no clients", async () => {
       setupTestDb(); // Clear the DB
-      expect(getAllClients()).rejects.toThrow();
+      await expect(getAllClients()).rejects.toThrow();
+    });
+  });
+
+  describe("updateClient", async () => {
+    let testClient: Awaited<ReturnType<typeof createClient>>;
+
+    beforeAll(async () => {
+      const newClient = createClientData();
+      testClient = await createClient(newClient);
+    });
+
+    it("should return a client with updated details", async () => {
+      const updatedClient = {
+        firstName: "Jack",
+        lastName: "Lang",
+        addressCity: "Dijon",
+      };
+      const dbUpdatedClient = await updateClientById(
+        testClient.id,
+        updatedClient
+      );
+
+      expect(dbUpdatedClient).toMatchObject({
+        ...testClient,
+        firstName: "Jack",
+        lastName: "Lang",
+        id: 1,
+        archivedAt: null,
+        addressCity: "Dijon",
+        addressStreet: null,
+        addressZip: null,
+        phoneCountryCode: null,
+        phoneNumber: null,
+        isArchived: false,
+      });
+    });
+
+    it("should throw if a client cannot be found", async () => {
+      const updatedClient = {
+        firstName: "Jack",
+        lastName: "Lang",
+        addressCity: "Dijon",
+      };
+
+      await expect(updateClientById(999, updatedClient)).rejects.toThrow();
+    });
+  });
+
+  describe("archiveClientsById", async () => {
+    let testData: Awaited<
+      ReturnType<typeof createClientWithInvoicesAndProjects>
+    >;
+    let archivedClient: Awaited<ReturnType<typeof archiveClientById>>;
+
+    beforeEach(async () => {
+      testData = await createClientWithInvoicesAndProjects();
+      archivedClient = await archiveClientById(testData.client.id);
+    });
+
+    it("should mark the client as archived", () => {
+      expect(archivedClient.isArchived).toBe(true);
+    });
+
+    it("should mark the client's project as archived", async () => {
+      const project = await db.project.findFirst({
+        where: { clientId: testData.client.id },
+      });
+      expect(project).toBeDefined();
+      expect(project?.isArchived).toBe(true);
+      expect(project?.archivedAt).toBeInstanceOf(Date);
+    });
+
+    it("should mark the client's invoices as archived", async () => {
+      const invoices = await db.invoice.findMany({
+        where: { clientId: testData.client.id },
+      });
+      expect(invoices).toHaveLength(3); // Verify we have all invoices
+      expect(invoices?.every((invoice) => invoice.isArchived)).toBe(true);
+      expect(
+        invoices?.every((invoice) => invoice.archivedAt instanceof Date)
+      ).toBe(true);
+    });
+
+    it("should archive the client even when there is no invoice", async () => {
+      await db.invoice.deleteMany({ where: { clientId: testData.client.id } });
+      await db.client.update({
+        where: { id: testData.client.id },
+        data: { isArchived: false, archivedAt: null },
+      });
+      const archivedClient = await archiveClientById(testData.client.id);
+      const projects = await db.project.findMany({
+        where: { clientId: testData.client.id },
+      });
+      expect(archivedClient.isArchived).toBe(true);
+      expect(archivedClient.archivedAt).toBeInstanceOf(Date);
+      expect(projects.every((project) => project.isArchived)).toBe(true);
+    });
+
+    it("should throw when there is no client", async () => {
+      await expect(archiveClientById(999)).rejects.toThrow();
     });
   });
 });

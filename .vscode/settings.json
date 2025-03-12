@@ -4,5 +4,7 @@
   },
   "prettier.configPath": "config/.prettierrc",
   "prettier.requireConfig": true,
-  "eslint.options": { "overrideConfigFile": "config/eslint.config.mjs" }
+  "eslint.options": {
+    "overrideConfigFile": "config/eslint.config.mjs"
+  }
 }
