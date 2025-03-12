@@ -45,6 +45,10 @@ Basic Principles
 - Provide context in error messages.
 - Use global error handling where appropriate.
 - Log errors with sufficient context.
+- Write clear and detailed commit messages.
+  - They follow conventional-commit guidelines.
+  - Lines must not be longer than 100 characters
+  - Follow commitlint guidelines
 
 Prisma-Specific Guidelines
 Schema Design
