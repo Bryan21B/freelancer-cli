@@ -1,7 +1,13 @@
-import { Client, Invoice, Prisma } from "@prisma/client";
-import { NewProject, Project, newProjectSchema } from "../types/models";
+import {
+  Client,
+  Invoice,
+  NewProject,
+  Project,
+  newProjectSchema,
+} from "../types/models";
 
-import { db } from "../prisma/index";
+import { Prisma } from "@prisma/client";
+import { db } from "../../prisma/index";
 import { isEmpty } from "lodash";
 import { z } from "zod";
 
