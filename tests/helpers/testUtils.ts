@@ -7,11 +7,14 @@ import { onTestFinished } from "vitest";
  */
 export const setupTestDb = () => {
   onTestFinished(async () => {
-    // Clean all tables in reverse order of dependencies
+    // Clean all tables and reset Prismock's state
     await Promise.all([
       db.invoice.deleteMany(),
       db.project.deleteMany(),
       db.client.deleteMany(),
     ]);
+
+    // @ts-expect-error - Prismock specific method
+    db.reset();
   });
 };
