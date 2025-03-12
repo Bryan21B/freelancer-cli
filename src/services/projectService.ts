@@ -11,6 +11,12 @@ import { db } from "../../prisma/index";
 import { isEmpty } from "lodash";
 import { z } from "zod";
 
+/**
+ * Creates a new project in the database
+ * @param {NewProject} project - The project data to create
+ * @returns {Promise<Project>} The created project
+ * @throws {Error} If project data is invalid or a project with same name exists
+ */
 export const createProject = async (project: NewProject): Promise<Project> => {
   try {
     const validatedProject = newProjectSchema.parse(project);
@@ -30,12 +36,24 @@ export const createProject = async (project: NewProject): Promise<Project> => {
   }
 };
 
+/**
+ * Retrieves a project by its ID
+ * @param {Project["id"]} projectId - The ID of the project to retrieve
+ * @returns {Promise<Project>} The found project
+ * @throws {Error} If no project is found with the given ID
+ */
 export const getProjectById = async (
   projectId: Project["id"]
 ): Promise<Project> => {
   return await db.project.findUniqueOrThrow({ where: { id: projectId } });
 };
 
+/**
+ * Gets all projects associated with a client
+ * @param {Client["id"]} clientId - The ID of the client
+ * @returns {Promise<Project[]>} Array of projects belonging to the client
+ * @throws {Error} If no projects are found for the client
+ */
 export const getProjectsByClientId = async (
   clientId: Client["id"]
 ): Promise<Project[]> => {
@@ -46,6 +64,12 @@ export const getProjectsByClientId = async (
   return projects;
 };
 
+/**
+ * Retrieves a project associated with a specific invoice
+ * @param {Invoice["id"]} invoiceId - The ID of the invoice
+ * @returns {Promise<Project>} The project associated with the invoice
+ * @throws {Error} If no project is found for the invoice
+ */
 export const getProjectByInvoiceID = async (
   invoiceId: Invoice["id"]
 ): Promise<Project> => {
@@ -58,6 +82,11 @@ export const getProjectByInvoiceID = async (
   return project;
 };
 
+/**
+ * Retrieves all projects from the database
+ * @returns {Promise<Project[]>} Array of all projects
+ * @throws {Error} If no projects exist in the database
+ */
 export const getAllProjects = async (): Promise<Project[]> => {
   const projects = await db.project.findMany();
   if (isEmpty(projects)) {
@@ -66,6 +95,12 @@ export const getAllProjects = async (): Promise<Project[]> => {
   return projects;
 };
 
+/**
+ * Updates a project's information by its ID
+ * @param {Project["id"]} projectId - The ID of the project to update
+ * @param {NewProject} project - The new project data
+ * @returns {Promise<Project>} The updated project
+ */
 export const updateProjectById = async (
   projectId: Project["id"],
   project: NewProject
@@ -73,6 +108,11 @@ export const updateProjectById = async (
   return await db.project.update({ where: { id: projectId }, data: project });
 };
 
+/**
+ * Sets the end date of a project to the current date
+ * @param {Project} project - The project to end
+ * @returns {Promise<Project>} The updated project with end date set
+ */
 export const endProject = async (project: Project): Promise<Project> => {
   return await db.project.update({
     where: { id: project.id },
@@ -80,6 +120,11 @@ export const endProject = async (project: Project): Promise<Project> => {
   });
 };
 
+/**
+ * Archives a project and all its associated invoices
+ * @param {Project} project - The project to archive
+ * @returns {Promise<Project>} The archived project
+ */
 export const archiveProject = async (project: Project): Promise<Project> => {
   const archiveInvoices = db.invoice.updateMany({
     where: { projectId: project.id },
@@ -93,6 +138,11 @@ export const archiveProject = async (project: Project): Promise<Project> => {
   return archiveProject;
 };
 
+/**
+ * Archives a project and all its associated invoices by project ID
+ * @param {Project["id"]} projectId - The ID of the project to archive
+ * @returns {Promise<Project>} The archived project
+ */
 export const archiveProjectById = async (
   projectId: Project["id"]
 ): Promise<Project> => {
