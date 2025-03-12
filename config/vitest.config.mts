@@ -8,5 +8,6 @@ export default defineConfig({
     clearMocks: true,
     restoreMocks: true,
     globals: true,
+    environment: "node",
   },
 });
