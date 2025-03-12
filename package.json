@@ -17,6 +17,8 @@
   "license": "MIT",
   "packageManager": "pnpm@10.6.1",
   "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "@eslint/js": "^9.22.0",
     "@types/lodash": "^4.17.16",
     "@types/node": "^22.13.10",
