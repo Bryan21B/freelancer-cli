@@ -2,6 +2,7 @@ import { Client, NewClient, newClientSchema } from "../types/models";
 
 import { Prisma } from "@prisma/client";
 import { db } from "../../prisma/index";
+import { isEmpty } from "lodash";
 import { z } from "zod";
 
 export const createClient = async (client: NewClient): Promise<Client> => {
@@ -30,7 +31,11 @@ export const getClientById = async (
 };
 
 export const getAllClients = async (): Promise<Client[]> => {
-  return await db.client.findMany();
+  const clients = await db.client.findMany();
+  if (isEmpty(clients)) {
+    throw new Error("No clients found");
+  }
+  return clients;
 };
 
 export const updateClient = async (
