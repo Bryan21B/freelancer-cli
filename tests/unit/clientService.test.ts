@@ -1,18 +1,18 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { NewClient } from "../../src/types/models";
 import { createClient } from "../../src/services/clientService";
+import { createClientData } from "../helpers/clientFactory";
 
 vi.mock("@prisma/client");
 
 describe("createClient", () => {
   it("should return the generated client", async () => {
-    const newClient = {
+    const newClient = createClientData({
       firstName: "Bryan",
       lastName: "Blanchot",
       companyName: "Bryan Blanchot",
       email: "bryan.blanchot@gmail.com",
-    };
+    });
 
     const client = await createClient(newClient);
 
@@ -38,14 +38,10 @@ describe("createClient", () => {
   });
 
   it("should throw an error when required data is missing", async () => {
-    const invalidClient: Partial<NewClient> = {
-      firstName: "Bryan",
-      companyName: "Bryan Blanchot",
-      email: "bryan.blanchot@gmail.com",
-      // lastName is missing
-    };
+    const invalidClient = createClientData();
+    delete (invalidClient as { lastName?: string }).lastName;
 
-    await expect(createClient(invalidClient as NewClient)).rejects.toThrow(
+    await expect(createClient(invalidClient)).rejects.toThrow(
       "Invalid client data"
     );
   });
