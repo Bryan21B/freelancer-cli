@@ -67,57 +67,82 @@ describe("Client Service", () => {
   describe("getClientById", () => {
     let testClient: Awaited<ReturnType<typeof createClient>>;
 
-    beforeAll(async () => {
-      const newClient = createClientData();
+    beforeEach(async () => {
+      const newClient = createClientData({
+        firstName: "Test",
+        lastName: "Client",
+        email: "test@example.com",
+      });
       testClient = await db.client.create({ data: newClient });
-      const newClient2 = createClientData();
-      await db.client.create({ data: newClient2 });
     });
 
-    it("should return the correct client", async () => {
-      const foundClient = await getClientById(testClient.id);
-      expect(foundClient).toMatchObject({
-        ...testClient,
-        id: 1,
-        archivedAt: null,
-        addressCity: null,
-        addressStreet: null,
-        addressZip: null,
-        phoneCountryCode: null,
-        phoneNumber: null,
+    it("should return the client when it exists and is not archived", async () => {
+      const client = await getClientById(testClient.id);
+      expect(client).toBeTypeOf("object");
+      expect(client).toMatchObject({
+        id: testClient.id,
+        firstName: "Test",
+        lastName: "Client",
+        email: "test@example.com",
         isArchived: false,
       });
     });
 
-    it("should throw for incorrect id", async () => {
+    it("should throw an error when client does not exist", async () => {
       await expect(getClientById(999)).rejects.toThrow();
+    });
+
+    it("should throw an error when client is archived and includeArchived is false", async () => {
+      await db.client.update({
+        where: { id: testClient.id },
+        data: { isArchived: true, archivedAt: new Date() },
+      });
+      await expect(getClientById(testClient.id)).rejects.toThrow();
+    });
+
+    it("should return archived client when includeArchived is true", async () => {
+      await db.client.update({
+        where: { id: testClient.id },
+        data: { isArchived: true, archivedAt: new Date() },
+      });
+      const client = await getClientById(testClient.id, true);
+      expect(client).toBeTypeOf("object");
+      expect(client).toMatchObject({
+        id: testClient.id,
+        firstName: "Test",
+        lastName: "Client",
+        email: "test@example.com",
+        isArchived: true,
+      });
     });
   });
 
   describe("getAllClients", () => {
-    let testClients: Awaited<ReturnType<typeof createClient>>[];
+    beforeEach(async () => {
+      // Create test clients
+      const client1 = createClientData({ firstName: "First" });
+      const client2 = createClientData({ firstName: "Second" });
+      const client3 = createClientData({ firstName: "Third" });
 
-    beforeAll(async () => {
-      const newClient1 = createClientData({ firstName: "First" });
-      const newClient2 = createClientData({ firstName: "Second" });
-      const newClient3 = createClientData({ firstName: "Third" });
-
-      testClients = await Promise.all([
-        db.client.create({ data: newClient1 }),
-        db.client.create({ data: newClient2 }),
-        db.client.create({ data: newClient3 }),
+      await Promise.all([
+        db.client.create({ data: client1 }),
+        db.client.create({ data: client2 }),
+        db.client.create({ data: client3 }),
       ]);
     });
 
-    it("should return all clients", async () => {
+    it("should return all non-archived clients by default", async () => {
       const clients = await getAllClients();
-      expect(clients).toHaveLength(3);
-      expect(clients).toEqual(expect.arrayContaining(testClients));
+      expect(clients).toBeInstanceOf(Array);
+      expect(clients.length).toBe(3);
+      expect(clients.every((client) => !client.isArchived)).toBe(true);
     });
 
-    it("should throw when there are no clients", async () => {
-      setupTestDb(); // Clear the DB
-      await expect(getAllClients()).rejects.toThrow();
+    it("should throw an error when no non-archived clients exist", async () => {
+      await db.client.updateMany({
+        data: { isArchived: true, archivedAt: new Date() },
+      });
+      await expect(getAllClients()).rejects.toThrow("No clients found");
     });
   });
 

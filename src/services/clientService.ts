@@ -33,22 +33,34 @@ export const createClient = async (client: NewClient): Promise<Client> => {
 /**
  * Retrieves a client by their ID
  * @param {Client["id"]} clientId - The ID of the client to retrieve
- * @returns {Promise<Client>} The found client
- * @throws {Error} If no client is found with the given ID
+ * @param {boolean} includeArchived - Whether to include archived clients
+ * @returns {Promise<Client>} The client object
+ * @throws {Error} If the client does not exist
  */
 export const getClientById = async (
-  clientId: Client["id"]
+  clientId: Client["id"],
+  includeArchived = false
 ): Promise<Client> => {
-  return await db.client.findUniqueOrThrow({ where: { id: clientId } });
+  return await db.client.findUniqueOrThrow({
+    where: {
+      id: clientId,
+      ...(includeArchived ? {} : { isArchived: false }),
+    },
+  });
 };
 
 /**
  * Retrieves all clients from the database
- * @returns {Promise<Client[]>} Array of all clients
+ * @param {boolean} includeArchived - Whether to include archived clients
+ * @returns {Promise<Client[]>} Array of clients
  * @throws {Error} If no clients exist in the database
  */
-export const getAllClients = async (): Promise<Client[]> => {
-  const clients = await db.client.findMany();
+export const getAllClients = async (
+  includeArchived = false
+): Promise<Client[]> => {
+  const clients = await db.client.findMany({
+    where: includeArchived ? {} : { isArchived: false },
+  });
   if (isEmpty(clients)) {
     throw new Error("No clients found");
   }
