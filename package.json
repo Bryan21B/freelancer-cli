@@ -9,8 +9,10 @@
     "prepare": "husky",
     "fix-link": "pnpm unlink && pnpm link",
     "build": "rm -rf dist && tsc --build --force ",
-    "wipe-db": "rm -rf freelancer-cli.db && rm -rf src/db/migrations",
-    "migrate": "pnpm prisma generate && pnpm prisma migrate dev"
+    "db:wipe": "rm -rf freelancer-cli.db && rm -rf src/db/migrations",
+    "db:migrate": "pnpm prisma generate && pnpm prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "pnpm db:wipe && pnpm db:migrate && pnpm db:seed"
   },
   "keywords": [],
   "author": "",
