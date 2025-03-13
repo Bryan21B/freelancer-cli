@@ -11,6 +11,7 @@ import {
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createClientWithInvoicesAndProjects,
+  createInvoices,
   createProjects,
   setupTestDb,
 } from "../helpers/testUtils";
@@ -18,6 +19,7 @@ import {
 import { NewProject } from "../../src/types/models";
 import { createProjectData } from "../helpers";
 import { db } from "../../prisma";
+import { isEmpty } from "lodash";
 
 vi.mock("@prisma/client");
 
@@ -203,6 +205,47 @@ describe("Project Service", () => {
 
       // Reset the mocked timers to prevent affecting other tests
       vi.useRealTimers();
+    });
+  });
+
+  describe("archiveProjectById", () => {
+    let archivedProject: Awaited<ReturnType<typeof archiveProjectById>>;
+    beforeEach(async () => {
+      await createInvoices();
+      archivedProject = await archiveProjectById(1);
+    });
+    it("should mark the project as archived", async () => {
+      expect(archivedProject.isArchived).toBe(true);
+      expect(archivedProject.archivedAt).toBeDefined();
+    });
+
+    it("should mark the project's invoices as archived", async () => {
+      const invoices = await db.invoice.findMany({
+        where: { projectId: 1 },
+      });
+      expect(isEmpty(invoices)).toBe(false);
+      expect(invoices?.every((invoice) => invoice.isArchived)).toBe(true);
+      expect(
+        invoices?.every((invoice) => invoice.archivedAt instanceof Date)
+      ).toBe(true);
+    });
+
+    it("should archive the project even where there is no invoice", async () => {
+      await db.invoice.deleteMany();
+      await db.project.update({
+        where: { id: 1 },
+        data: { isArchived: false, archivedAt: undefined },
+      });
+
+      const archivedProject = await archiveProjectById(1);
+      const invoices = await db.invoice.findMany({ where: { projectId: 1 } });
+      expect(archivedProject.isArchived).toBe(true);
+      expect(archivedProject.archivedAt).toBeDefined();
+      expect(invoices.every((invoice) => invoice.isArchived)).toBe(true);
+    });
+
+    it("should throw when there is no project", async () => {
+      await expect(archiveProjectById(999)).rejects.toThrow("No Project found");
     });
   });
 });
