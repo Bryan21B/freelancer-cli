@@ -65,21 +65,21 @@ export const getAllProjects = async (): Promise<Project[]> => {
  * Retrieves non-archived projects for a client, optionally filtering for active projects only
  * @param {Client["id"]} clientId - The ID of the client
  * @param {boolean} activeOnly - If true, returns only active projects (no end date)
+ * @param {boolean} includeArchived - Whether to include archived projects
  * @returns {Promise<Project[]>} Array of matching projects
  * @throws {Error} If no matching projects are found
  */
 export const getClientProjects = async (
   clientId: Client["id"],
-  activeOnly = false
+  activeOnly = false,
+  includeArchived = false
 ): Promise<Project[]> => {
   // Build the where clause for the database query
-  // - Always filter by clientId to get projects for specific client
-  // - Only return non-archived projects (isArchived: false)
-  // - If activeOnly is true, only return projects with no end date
   const where = {
     clientId,
-    isArchived: false,
-    // Spread operator conditionally adds endDate: null when activeOnly is true
+    // Only include isArchived filter if we're not including archived projects
+    ...(includeArchived ? {} : { isArchived: false }),
+    // Only include endDate filter if activeOnly is true
     ...(activeOnly && { endDate: null }),
   };
 
@@ -89,7 +89,6 @@ export const getClientProjects = async (
   // If no projects found at all, throw appropriate error based on activeOnly flag
   if (isEmpty(projects)) {
     throw new Error(
-      // More specific error message when filtering for active projects
       activeOnly ? "No active projects found" : "No projects found"
     );
   }
@@ -101,7 +100,6 @@ export const getClientProjects = async (
     throw new Error("No active projects found");
   }
 
-  // Return the filtered projects
   return projects;
 };
 
