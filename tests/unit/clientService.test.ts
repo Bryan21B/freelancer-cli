@@ -121,7 +121,7 @@ describe("Client Service", () => {
     });
   });
 
-  describe("updateClient", async () => {
+  describe("updateClientById", async () => {
     let testClient: Awaited<ReturnType<typeof createClient>>;
 
     beforeAll(async () => {
