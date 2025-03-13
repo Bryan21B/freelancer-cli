@@ -8,8 +8,7 @@ import {
   getProjectsByClientId,
   updateProject,
 } from "../../src/services/projectService";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { createClientData, createProjectData } from "../helpers";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createClientWithInvoicesAndProjects,
   createProjects,
