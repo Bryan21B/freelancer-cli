@@ -122,12 +122,15 @@ export const updateProjectById = async (
 
 /**
  * Sets the end date of a project to the current date
- * @param {Project} project - The project to end
+ * @param {Project["id"]} projectId - The ID of the project to end
  * @returns {Promise<Project>} The updated project with end date set
+ * @throws {Error} If no project is found with the given ID
  */
-export const endProject = async (project: Project): Promise<Project> => {
+export const endProjectById = async (
+  projectId: Project["id"]
+): Promise<Project> => {
   return await db.project.update({
-    where: { id: project.id },
+    where: { id: projectId },
     data: { endDate: new Date() },
   });
 };
