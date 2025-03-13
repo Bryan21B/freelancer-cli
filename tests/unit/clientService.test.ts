@@ -55,6 +55,7 @@ describe("Client Service", () => {
 
     it("should throw an error when required data is missing", async () => {
       const invalidClient = createClientData();
+      // Type assertion to allow property deletion, then remove lastName to create invalid data
       delete (invalidClient as { lastName?: string }).lastName;
 
       await expect(createClient(invalidClient)).rejects.toThrowError(

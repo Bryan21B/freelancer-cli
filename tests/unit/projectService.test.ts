@@ -9,14 +9,13 @@ import {
   updateProject,
 } from "../../src/services/projectService";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { createClientData, createProjectData } from "../helpers";
 import {
   createClientWithInvoicesAndProjects,
   createProjects,
   setupTestDb,
 } from "../helpers/testUtils";
 
-import { before } from "lodash";
-import { createClientData } from "../helpers";
 import { db } from "../../prisma";
 
 vi.mock("@prisma/client");
@@ -119,6 +118,30 @@ describe("Project Service", () => {
     it("should throw an error when invoice does not exist", async () => {
       await expect(getProjectByInvoiceID(43)).rejects.toThrowError(
         "Invoice not found"
+      );
+    });
+  });
+
+  describe("createProject", () => {
+    const newProject = createProjectData({
+      clientId: 1,
+      name: "Created Project",
+    });
+
+    it("should create a project and return it", async () => {
+      const project = await createProject(newProject);
+      expect(project).toMatchObject({
+        ...newProject,
+        archivedAt: null,
+        isArchived: false,
+      });
+    });
+
+    it("should throw an error when required data is missing", async () => {
+      const invalidProject = createProjectData();
+      delete (invalidProject as { name?: string }).name;
+      await expect(createProject(invalidProject)).rejects.toThrowError(
+        "Invalid project data"
       );
     });
   });
