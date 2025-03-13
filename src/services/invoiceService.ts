@@ -9,7 +9,7 @@ import {
 
 import { Prisma } from "@prisma/client";
 import { db } from "../../prisma/index";
-import { isEmpty } from "lodash";
+import { isEmpty } from "radash";
 import { z } from "zod";
 
 type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;

@@ -1,8 +1,8 @@
-import { Client, NewClient, newClientSchema } from "../types/models";
+import { Client, NewClient, newClientSchema } from "../types/models.js";
 
 import { Prisma } from "@prisma/client";
-import { db } from "../../prisma/index";
-import { isEmpty } from "lodash";
+import { db } from "../../prisma/index.js";
+import { isEmpty } from "radash";
 import { z } from "zod";
 
 /**
