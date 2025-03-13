@@ -52,15 +52,22 @@ export const getProjectById = async (
  * Gets all projects associated with a client
  * @param {Client["id"]} clientId - The ID of the client
  * @returns {Promise<Project[]>} Array of projects belonging to the client
- * @throws {Error} If no projects are found for the client
+ * @throws {Error} If client is not found or no projects exist for the client
  */
 export const getProjectsByClientId = async (
   clientId: Client["id"]
 ): Promise<Project[]> => {
-  const projects = await db.project.findMany({ where: { clientId: clientId } });
+  // First check if client exists
+  const client = await db.client.findFirst({ where: { id: clientId } });
+  if (!client) {
+    throw new Error("Client not found");
+  }
+
+  const projects = await db.project.findMany({ where: { clientId } });
   if (isEmpty(projects)) {
     throw new Error("No projects found for that client");
   }
+
   return projects;
 };
 
@@ -68,12 +75,17 @@ export const getProjectsByClientId = async (
  * Retrieves a project associated with a specific invoice
  * @param {Invoice["id"]} invoiceId - The ID of the invoice
  * @returns {Promise<Project>} The project associated with the invoice
- * @throws {Error} If no project is found for the invoice
+ * @throws {Error} If no project is found for the invoice or if invoice not found
  */
 export const getProjectByInvoiceID = async (
   invoiceId: Invoice["id"]
 ): Promise<Project> => {
-  const project = await db.project.findFirstOrThrow({
+  const invoice = await db.invoice.findFirst({ where: { id: invoiceId } });
+
+  if (!invoice) {
+    throw new Error("Invoice not found");
+  }
+  const project = await db.project.findFirst({
     where: { invoices: { some: { id: invoiceId } } },
   });
   if (!project) {
