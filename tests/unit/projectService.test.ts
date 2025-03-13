@@ -3,9 +3,9 @@ import {
   createProject,
   endProjectById,
   getAllProjects,
+  getClientProjects,
   getProjectById,
-  getProjectByInvoiceID,
-  getProjectsByClientId,
+  getProjectByInvoiceId,
   updateProjectById,
 } from "../../src/services/projectService";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -72,10 +72,13 @@ describe("Project Service", () => {
     });
   });
 
-  describe("getProjectsByClientId", () => {
-    it("should return the projects when they exist", async () => {
+  describe("getClientProjects", () => {
+    beforeEach(async () => {
       await createProjects();
-      const projects = await getProjectsByClientId(1);
+    });
+
+    it("should return all non-archived projects for a client", async () => {
+      const projects = await getClientProjects(1);
       expect(projects).toBeInstanceOf(Array);
       expect(projects).toHaveLength(4); // One project from createClientWithInvoicesAndProjects and three from createProjects
       expect(projects[0]).toMatchObject({
@@ -87,20 +90,47 @@ describe("Project Service", () => {
     });
 
     it("should throw an error when client does not exist", async () => {
-      await expect(getProjectsByClientId(999)).rejects.toThrowError(
-        "Client not found"
+      await expect(getClientProjects(999)).rejects.toThrowError(
+        "No projects found"
       );
     });
 
-    it("should throw an error when project does not exist for client", async () => {
+    it("should throw an error when no projects exist for client", async () => {
       await db.project.deleteMany();
-      await expect(getProjectsByClientId(1)).rejects.toThrowError("No project");
+      await expect(getClientProjects(1)).rejects.toThrowError(
+        "No projects found"
+      );
+    });
+
+    it("should return only active projects when activeOnly is true", async () => {
+      // Create a project with an end date
+      await db.project.update({
+        where: { id: 1 },
+        data: { endDate: new Date() },
+      });
+
+      const projects = await getClientProjects(1, true);
+      expect(projects).toBeInstanceOf(Array);
+      expect(projects.length).toBeGreaterThan(0);
+      expect(projects.every((project) => !project.isArchived)).toBe(true);
+      expect(projects.every((project) => project.clientId === 1)).toBe(true);
+      expect(projects.every((project) => !project.endDate)).toBe(true);
+    });
+
+    it("should throw an error when no active projects are found", async () => {
+      await db.project.updateMany({
+        where: { clientId: 1 },
+        data: { endDate: new Date() },
+      });
+      await expect(getClientProjects(1, true)).rejects.toThrow(
+        "No active projects found"
+      );
     });
   });
 
   describe("getProjectByInvoiceId", () => {
     it("should return the project when it exists", async () => {
-      const project = await getProjectByInvoiceID(1);
+      const project = await getProjectByInvoiceId(1);
       expect(project).toBeTypeOf("object");
       expect(project).toMatchObject({
         id: 1,
@@ -112,13 +142,13 @@ describe("Project Service", () => {
 
     it("should throw an error when project does not exist", async () => {
       await db.project.deleteMany();
-      await expect(getProjectByInvoiceID(1)).rejects.toThrowError(
+      await expect(getProjectByInvoiceId(1)).rejects.toThrowError(
         "No project found for that invoice"
       );
     });
 
     it("should throw an error when invoice does not exist", async () => {
-      await expect(getProjectByInvoiceID(43)).rejects.toThrowError(
+      await expect(getProjectByInvoiceId(43)).rejects.toThrowError(
         "Invoice not found"
       );
     });

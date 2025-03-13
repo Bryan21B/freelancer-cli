@@ -49,6 +49,7 @@ Basic Principles
   - They follow conventional-commit guidelines.
   - Lines must not be longer than 100 characters
   - Follow commitlint guidelines
+  - Commit messages should use backticks for function names
 
 Prisma-Specific Guidelines
 Schema Design
