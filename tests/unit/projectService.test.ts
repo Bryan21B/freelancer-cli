@@ -1,12 +1,12 @@
 import {
   archiveProjectById,
   createProject,
-  endProject,
+  endProjectById,
   getAllProjects,
   getProjectById,
   getProjectByInvoiceID,
   getProjectsByClientId,
-  updateProject,
+  updateProjectById,
 } from "../../src/services/projectService";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -15,6 +15,8 @@ import {
   setupTestDb,
 } from "../helpers/testUtils";
 
+import { NewProject } from "../../src/types/models";
+import { createProjectData } from "../helpers";
 import { db } from "../../prisma";
 
 vi.mock("@prisma/client");
@@ -141,6 +143,66 @@ describe("Project Service", () => {
       await expect(createProject(invalidProject)).rejects.toThrowError(
         "Invalid project data"
       );
+    });
+  });
+
+  describe("updateProjectById", () => {
+    it("should return an updated project", async () => {
+      const initialProject = await db.project.findFirstOrThrow({
+        where: { id: 1 },
+      });
+      const updatedProject: Partial<NewProject> = {
+        name: "Modified Project",
+        description: "This project has been modified",
+      };
+
+      const dbUpdatedProject = await updateProjectById(1, updatedProject);
+      expect(dbUpdatedProject).toMatchObject({
+        ...initialProject,
+        description: "This project has been modified",
+        name: "Modified Project",
+      });
+      expect(dbUpdatedProject).not.toBe(initialProject);
+    });
+
+    it("should throw an error when the project is not found", async () => {
+      const updatedProject: Partial<NewProject> = {
+        name: "Modified Project",
+        description: "This project has been modified",
+      };
+
+      await expect(updateProjectById(54, updatedProject)).rejects.toThrowError(
+        "No Project found"
+      );
+    });
+  });
+
+  describe("endProjectById", () => {
+    it("should set an end date that is later than the start date", async () => {
+      // Create a fixed point in time to start from
+      const startTime = new Date();
+      // Mock the system time to ensure consistent test behavior
+      vi.setSystemTime(startTime);
+
+      // Create a new project which will use our mocked time as its start date
+      const project = await createProject(createProjectData());
+
+      // Move time forward by 1 second to simulate time passing
+      // This ensures the end date will be later than the start date
+      vi.setSystemTime(startTime.getTime() + 1000);
+
+      // End the project, which should set its end date to our new mocked time
+      const updatedProject = await endProjectById(project.id);
+
+      // Verify the end date was set and is a valid Date object
+      expect(updatedProject.endDate).toBeInstanceOf(Date);
+      // Verify the end date is chronologically after the start date
+      expect(updatedProject.endDate!.getTime()).toBeGreaterThan(
+        project.startDate.getTime()
+      );
+
+      // Reset the mocked timers to prevent affecting other tests
+      vi.useRealTimers();
     });
   });
 });
