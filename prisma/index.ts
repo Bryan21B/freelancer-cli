@@ -4,17 +4,6 @@ import { PrismaClient } from "@prisma/client";
 
 export const db = new PrismaClient();
 
-const newClient = await db.client.create({
-  data: {
-    firstName: "Bryan",
-    lastName: "Blanchot",
-    companyName: "Bryan Blanchot",
-    email: "bryan.blanchot@gmail.com",
-  },
-});
-
-console.log(newClient);
-
 // const newClient: Client = {
 //   firstName: "Bryan",
 //   lastName: "Blanchot",
