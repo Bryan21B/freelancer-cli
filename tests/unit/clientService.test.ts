@@ -57,7 +57,7 @@ describe("Client Service", () => {
       const invalidClient = createClientData();
       delete (invalidClient as { lastName?: string }).lastName;
 
-      await expect(createClient(invalidClient)).rejects.toThrow(
+      await expect(createClient(invalidClient)).rejects.toThrowError(
         "Invalid client data"
       );
     });
