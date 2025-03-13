@@ -1,6 +1,6 @@
 import { Client, Invoice, Project } from "@prisma/client";
+import { NewInvoice, NewProject } from "../../src/types/models";
 
-import { NewProject } from "../../src/types/models";
 import { createClientData } from "./clientFactory";
 import { createInvoiceData } from "./invoiceFactory";
 import { createProjectData } from "./projectFactory";
@@ -63,4 +63,18 @@ export const createProjects = async (
   }
   projects = await db.project.createManyAndReturn({ data: projects });
   return projects;
+};
+
+export const createInvoices = async (
+  numberOfInvoices: number = 3,
+  projectId: Project["id"] = 1
+) => {
+  let invoices: Array<NewInvoice> = [];
+  for (let index = 1; index <= numberOfInvoices; index++) {
+    invoices.push(createInvoiceData({ projectId }));
+  }
+  invoices = (await db.invoice.createManyAndReturn({
+    data: invoices,
+  })) as Array<NewInvoice>;
+  return invoices;
 };
