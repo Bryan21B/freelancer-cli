@@ -176,7 +176,6 @@ export const getAllInvoices = async (
       ...(status ? { status } : {}),
     },
   });
-
   if (isEmpty(invoices)) {
     throw new Error("No invoices found");
   }
