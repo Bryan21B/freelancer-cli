@@ -85,9 +85,15 @@ describe("Project Service", () => {
       });
     });
 
-    it("should throw an error when projects do not exist for that client", async () => {
+    it("should throw an error when client does not exist", async () => {
+      await expect(getProjectsByClientId(999)).rejects.toThrowError(
+        "Client not found"
+      );
+    });
+
+    it("should throw an error when project does not exist for client", async () => {
       await db.project.deleteMany();
-      await expect(getProjectsByClientId(999)).rejects.toThrow();
+      await expect(getProjectsByClientId(1)).rejects.toThrowError("No project");
     });
   });
 
@@ -104,7 +110,6 @@ describe("Project Service", () => {
     });
 
     it("should throw an error when project does not exist", async () => {
-      //TODO: Actually we need to check both cases when invoice doesn't exist and when project doesn't exist
       await db.project.deleteMany();
       await expect(getProjectByInvoiceID(1)).rejects.toThrowError(
         "No project found for that invoice"
