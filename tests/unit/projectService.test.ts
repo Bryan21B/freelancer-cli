@@ -70,7 +70,6 @@ describe("Project Service", () => {
 
   describe("getProjectsByClientId", () => {
     it("should return the projects when they exist", async () => {
-      //TODO Check what happens when client doesn't exist
       await createProjects();
       const projects = await getProjectsByClientId(1);
       expect(projects).toBeInstanceOf(Array);
