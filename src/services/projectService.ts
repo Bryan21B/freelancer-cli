@@ -49,52 +49,6 @@ export const getProjectById = async (
 };
 
 /**
- * Gets all projects associated with a client
- * @param {Client["id"]} clientId - The ID of the client
- * @returns {Promise<Project[]>} Array of projects belonging to the client
- * @throws {Error} If client is not found or no projects exist for the client
- */
-export const getProjectsByClientId = async (
-  clientId: Client["id"]
-): Promise<Project[]> => {
-  // First check if client exists
-  const client = await db.client.findFirst({ where: { id: clientId } });
-  if (!client) {
-    throw new Error("Client not found");
-  }
-
-  const projects = await db.project.findMany({ where: { clientId } });
-  if (isEmpty(projects)) {
-    throw new Error("No projects found for that client");
-  }
-
-  return projects;
-};
-
-/**
- * Retrieves a project associated with a specific invoice
- * @param {Invoice["id"]} invoiceId - The ID of the invoice
- * @returns {Promise<Project>} The project associated with the invoice
- * @throws {Error} If no project is found for the invoice or if invoice not found
- */
-export const getProjectByInvoiceID = async (
-  invoiceId: Invoice["id"]
-): Promise<Project> => {
-  const invoice = await db.invoice.findFirst({ where: { id: invoiceId } });
-
-  if (!invoice) {
-    throw new Error("Invoice not found");
-  }
-  const project = await db.project.findFirst({
-    where: { invoices: { some: { id: invoiceId } } },
-  });
-  if (!project) {
-    throw new Error("No project found for that invoice");
-  }
-  return project;
-};
-
-/**
  * Retrieves all projects from the database
  * @returns {Promise<Project[]>} Array of all projects
  * @throws {Error} If no projects exist in the database
@@ -104,6 +58,50 @@ export const getAllProjects = async (): Promise<Project[]> => {
   if (isEmpty(projects)) {
     throw new Error("No projects found");
   }
+  return projects;
+};
+
+/**
+ * Retrieves non-archived projects for a client, optionally filtering for active projects only
+ * @param {Client["id"]} clientId - The ID of the client
+ * @param {boolean} activeOnly - If true, returns only active projects (no end date)
+ * @returns {Promise<Project[]>} Array of matching projects
+ * @throws {Error} If no matching projects are found
+ */
+export const getClientProjects = async (
+  clientId: Client["id"],
+  activeOnly = false
+): Promise<Project[]> => {
+  // Build the where clause for the database query
+  // - Always filter by clientId to get projects for specific client
+  // - Only return non-archived projects (isArchived: false)
+  // - If activeOnly is true, only return projects with no end date
+  const where = {
+    clientId,
+    isArchived: false,
+    // Spread operator conditionally adds endDate: null when activeOnly is true
+    ...(activeOnly && { endDate: null }),
+  };
+
+  // Query the database for matching projects
+  const projects = await db.project.findMany({ where });
+
+  // If no projects found at all, throw appropriate error based on activeOnly flag
+  if (isEmpty(projects)) {
+    throw new Error(
+      // More specific error message when filtering for active projects
+      activeOnly ? "No active projects found" : "No projects found"
+    );
+  }
+
+  // Additional validation when activeOnly is true:
+  // Even though we filtered in the query, double check that no projects
+  // have an end date (defensive programming)
+  if (activeOnly && projects.some((project) => project.endDate !== null)) {
+    throw new Error("No active projects found");
+  }
+
+  // Return the filtered projects
   return projects;
 };
 
@@ -137,10 +135,17 @@ export const endProjectById = async (
 
 /**
  * Archives a project and all its associated invoices
- * @param {Project} project - The project to archive
+ * @param {Project["id"]} projectId - The ID of the project to archive
  * @returns {Promise<Project>} The archived project
+ * @throws {Error} If no project is found with the given ID
  */
-export const archiveProject = async (project: Project): Promise<Project> => {
+export const archiveProjectById = async (
+  projectId: Project["id"]
+): Promise<Project> => {
+  const project = await db.project.findUniqueOrThrow({
+    where: { id: projectId },
+  });
+
   const archiveInvoices = db.invoice.updateMany({
     where: { projectId: project.id },
     data: { isArchived: true, archivedAt: new Date() },
@@ -154,21 +159,24 @@ export const archiveProject = async (project: Project): Promise<Project> => {
 };
 
 /**
- * Archives a project and all its associated invoices by project ID
- * @param {Project["id"]} projectId - The ID of the project to archive
- * @returns {Promise<Project>} The archived project
+ * Retrieves a project associated with a specific invoice
+ * @param {Invoice["id"]} invoiceId - The ID of the invoice
+ * @returns {Promise<Project>} The project associated with the invoice
+ * @throws {Error} If no project is found for the invoice or if invoice not found
  */
-export const archiveProjectById = async (
-  projectId: Project["id"]
+export const getProjectByInvoiceId = async (
+  invoiceId: Invoice["id"]
 ): Promise<Project> => {
-  const archiveInvoices = db.invoice.updateMany({
-    where: { projectId: projectId },
-    data: { isArchived: true, archivedAt: new Date() },
+  const invoice = await db.invoice.findFirst({ where: { id: invoiceId } });
+
+  if (!invoice) {
+    throw new Error("Invoice not found");
+  }
+  const project = await db.project.findFirst({
+    where: { invoices: { some: { id: invoiceId } } },
   });
-  const archiveProject = db.project.update({
-    where: { id: projectId },
-    data: { isArchived: true, archivedAt: new Date() },
-  });
-  await db.$transaction([archiveInvoices, archiveProject]);
-  return archiveProject;
+  if (!project) {
+    throw new Error("No project found for that invoice");
+  }
+  return project;
 };
