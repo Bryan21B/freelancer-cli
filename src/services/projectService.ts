@@ -58,7 +58,7 @@ export const getProjectsByClientId = async (
   clientId: Client["id"]
 ): Promise<Project[]> => {
   const projects = await db.project.findMany({ where: { clientId: clientId } });
-  if (!projects) {
+  if (isEmpty(projects)) {
     throw new Error("No projects found for that client");
   }
   return projects;
