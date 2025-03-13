@@ -115,8 +115,8 @@ export const getAllProjects = async (): Promise<Project[]> => {
  */
 export const updateProjectById = async (
   projectId: Project["id"],
-  project: NewProject
-) => {
+  project: Partial<NewProject>
+): Promise<Project> => {
   return await db.project.update({ where: { id: projectId }, data: project });
 };
 
