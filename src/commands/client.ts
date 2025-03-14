@@ -1,3 +1,4 @@
+import { FormattedClient, formatClientObject } from "../utils/formatters.js";
 import { getAllClients, getClientById } from "../services/clientService.js";
 
 import { Client } from "../types/models.js";
@@ -5,19 +6,21 @@ import { Command } from "commander";
 import Table from "easy-table";
 import chalk from "chalk";
 import { config } from "../utils/cli-config.js";
-import { formatClientObject } from "../utils/formatters.js";
 import { toInt } from "radash";
 
 export function createClientCommand(): Command {
   const clientCommand = new Command("client").description("Manage clients");
+
   clientCommand
     .command("list")
-    .description("List all clients")
+    .description("List all clients in a table format")
     .action(async () => {
       const t = new Table();
-      const clients = (await getAllClients()).map((client) => ({
-        ...formatClientObject(client),
-      }));
+      const clients: FormattedClient[] = (await getAllClients()).map(
+        (client) => ({
+          ...formatClientObject(client),
+        })
+      );
       clients.forEach((client) => {
         Object.entries(client).forEach(([key, value]) => {
           t.cell(chalk.blue(key), value);
@@ -32,11 +35,11 @@ export function createClientCommand(): Command {
 
   clientCommand
     .command("view")
-    .description("View a client")
+    .description("View a client by its id")
     .argument("<id>", "ID of the client to view")
     .action(async (rawId: string) => {
-      const client = await getClientById(toInt(rawId));
-      const formattedClient = formatClientObject(client);
+      const client: Client = await getClientById(toInt(rawId));
+      const formattedClient: FormattedClient = formatClientObject(client);
       const t = new Table();
       Object.entries(formattedClient).forEach(([key, value]) => {
         t.cell(chalk.blue(key), value);

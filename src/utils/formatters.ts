@@ -2,7 +2,7 @@ import { Client } from "../types/models.js";
 import chalk from "chalk";
 import { formatDistanceToNow } from "date-fns";
 
-type UpdatedClient = {
+export type FormattedClient = {
   Name: string;
   Company: string;
   Address: string;
@@ -17,14 +17,14 @@ type UpdatedClient = {
  * @param {Client} client - The client object to format
  * @param {boolean} includeArchiveInfo - Whether to include archive status in output
  * @param {boolean} includeId - Whether to include client ID in output
- * @returns {UpdatedClient} Formatted client object with selected fields
+ * @returns {FormattedClient} Formatted client object with selected fields
  */
 export const formatClientObject = (
   client: Client,
   includeArchiveInfo: boolean = false,
   includeId: boolean = true
 ) => {
-  const updatedClient: UpdatedClient = {
+  const updatedClient: FormattedClient = {
     // Conditionally spread the Id field only if id param is true
     ...(includeId && { Id: client.id }),
     Name: `${client.firstName} ${client.lastName}`,
