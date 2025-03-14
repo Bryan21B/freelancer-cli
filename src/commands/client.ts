@@ -39,15 +39,13 @@ export function createClientCommand(): Command {
     .argument("<id>", "ID of the client to view")
     .action(async (rawId: string) => {
       const client = await getClientById(toInt(rawId));
+      const formattedClient = formatClientObject(client);
       const t = new Table();
-
-      t.cell("Id", client.id);
-      t.cell("Name", client.firstName);
-      t.cell("Company", client.companyName);
-      t.cell("Email", client.email);
+      Object.entries(formattedClient).forEach(([key, value]) => {
+        t.cell(chalk.blue(key), value);
+      });
       t.newRow();
-
-      console.log(t.toString());
+      console.log(t.printTransposed());
     });
 
   return clientCommand;
