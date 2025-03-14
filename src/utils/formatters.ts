@@ -36,7 +36,7 @@ export const formatClientObject = (
     Created: formatDistanceToNow(client.createdAt, { addSuffix: true }),
     // Conditionally spread the Archived field only if archiveInfo param is true
     ...(includeArchiveInfo && {
-      Archived: client.isArchived ? chalk.yellow("yes") : "no",
+      Archived: client.isArchived ? chalk.yellow("Yes") : "No",
     }),
   };
 
