@@ -3,7 +3,7 @@ import { Command } from "commander";
 import Table from "easy-table";
 import chalk from "chalk";
 import { config } from "../utils/cli-config.js";
-import { getAllClients } from "../services/clientService.js";
+import { toInt } from "radash";
 
 export function createClientCommand(): Command {
   const clientCommand = new Command("client").description("Manage clients");
@@ -31,6 +31,23 @@ export function createClientCommand(): Command {
         console.error(error);
         process.exit(0);
       }
+    });
+
+  clientCommand
+    .command("view")
+    .description("View a client")
+    .argument("<id>", "ID of the client to view")
+    .action(async (rawId: string) => {
+      const client = await getClientById(toInt(rawId));
+      const t = new Table();
+
+      t.cell("Id", client.id);
+      t.cell("Name", client.firstName);
+      t.cell("Company", client.companyName);
+      t.cell("Email", client.email);
+      t.newRow();
+
+      console.log(t.toString());
     });
 
   return clientCommand;
