@@ -26,6 +26,12 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
+      easy-table:
+        specifier: 1.2.0
+        version: 1.2.0
+      easy-tables:
+        specifier: ^0.2.1
+        version: 0.2.1
       execa:
         specifier: ^9.5.2
         version: 9.5.2
@@ -1208,6 +1214,12 @@ packages:
   drizzle-kit@0.30.5:
     resolution: {integrity: sha512-l6dMSE100u7sDaTbLczibrQZjA35jLsHNqIV+jmhNVO3O8jzM6kywMOmV9uOz9ZVSCMPQhAZEFjL/qDPVrqpUA==}
     hasBin: true
+
+  easy-table@1.2.0:
+    resolution: {integrity: sha512-OFzVOv03YpvtcWGe5AayU5G2hgybsg3iqA6drU8UaoZyB9jLGMTrz9+asnLp/E+6qPh88yEI1gvyZFZ41dmgww==}
+
+  easy-tables@0.2.1:
+    resolution: {integrity: sha512-HEbxndbfNzftuPXxZTmxGsWWjUqtrr5fzA8LwZ0LsK634eKzf92TU3eYebRlfKgwTivqX/4NcjE5T7lhWSwl1w==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -3222,6 +3234,14 @@ snapshots:
       gel: 2.0.1
     transitivePeerDependencies:
       - supports-color
+
+  easy-table@1.2.0:
+    dependencies:
+      ansi-regex: 5.0.1
+    optionalDependencies:
+      wcwidth: 1.0.1
+
+  easy-tables@0.2.1: {}
 
   emoji-regex@8.0.0: {}
 

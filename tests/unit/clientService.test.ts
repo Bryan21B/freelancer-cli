@@ -133,6 +133,7 @@ describe("Client Service", () => {
 
     it("should return all non-archived clients by default", async () => {
       const clients = await getAllClients();
+
       expect(clients).toBeInstanceOf(Array);
       expect(clients.length).toBe(3);
       expect(clients.every((client) => !client.isArchived)).toBe(true);

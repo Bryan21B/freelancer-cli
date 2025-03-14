@@ -49,6 +49,8 @@
     "commander": "^13.1.0",
     "conf": "^13.1.0",
     "dotenv": "^16.4.7",
+    "easy-table": "1.2.0",
+    "easy-tables": "^0.2.1",
     "execa": "^9.5.2",
     "radash": "^12.1.0",
     "zod": "^3.24.2"
