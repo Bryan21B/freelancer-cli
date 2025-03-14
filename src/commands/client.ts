@@ -1,8 +1,11 @@
+import { getAllClients, getClientById } from "../services/clientService.js";
+
 import { Client } from "../types/models.js";
 import { Command } from "commander";
 import Table from "easy-table";
 import chalk from "chalk";
 import { config } from "../utils/cli-config.js";
+import { formatClientObject } from "../utils/formatters.js";
 import { toInt } from "radash";
 
 export function createClientCommand(): Command {
@@ -11,26 +14,20 @@ export function createClientCommand(): Command {
     .command("list")
     .description("List all clients")
     .action(async () => {
-      try {
-        const t = new Table();
-        const clients: Client[] = (await getAllClients()).map((client) => ({
-          ...client,
-        }));
-        clients.forEach(function (client) {
-          t.cell("Id", client.id);
-          t.cell("Name", client.firstName);
-          t.cell("Company", client.companyName);
-          t.cell("Email", client.email);
-          t.newRow();
+      const t = new Table();
+      const clients = (await getAllClients()).map((client) => ({
+        ...formatClientObject(client),
+      }));
+      clients.forEach((client) => {
+        Object.entries(client).forEach(([key, value]) => {
+          t.cell(chalk.blue(key), value);
         });
-        console.log(
-          "Below are your clients, to view more info on a client run 'client view' followed by the id number. \n"
-        );
-        console.log(t.toString());
-      } catch (error) {
-        console.error(error);
-        process.exit(0);
-      }
+        t.newRow();
+      });
+      console.log(
+        "Below are your clients, to view more info on a client run 'client view' followed by the id number. \n"
+      );
+      console.log(t.toString());
     });
 
   clientCommand
