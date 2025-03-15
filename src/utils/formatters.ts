@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 export type FormattedClient = {
   Name: string;
   Company: string;
+  Email: string;
   Address: string;
   Phone: string;
   Created: string;
@@ -31,9 +32,10 @@ export const formatClientObject = (
     ...(includeId && { Id: client.id }),
     Name: `${client.firstName} ${client.lastName}`,
     Company: client.companyName,
-    Address: `${client.addressStreet || ""}, ${client.addressZip || ""} ${
-      client.addressCity || ""
-    }`,
+    Email: client.email,
+    Address: `${client.addressStreet ? client.addressStreet + ", " : ""}${
+      client.addressZip || ""
+    } ${client.addressCity || ""}`,
     Phone: `${client.phoneCountryCode || ""} ${client.phoneNumber || ""}`,
     Created: formatDistanceToNow(client.createdAt, { addSuffix: true }),
     Updated: formatDistanceToNow(client.updatedAt, { addSuffix: true }),
