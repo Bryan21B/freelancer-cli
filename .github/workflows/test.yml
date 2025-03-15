@@ -8,6 +8,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "file:./test.db"
     steps:
       - uses: actions/checkout@v4
       - name: Install pnpm
@@ -18,8 +20,11 @@ jobs:
           node-version: "20.x"
           cache: "pnpm"
 
-      - run: pnpm install
-      - name: Generate Prisma Client
-        run: pnpm prisma generate
+      - run: pnpm install --no-frozen-lockfile
+      - name: Setup Prisma
+        run: |
+          pnpm install prisma@latest
+          pnpm install @prisma/client@latest
+          pnpm dlx prisma generate
       - run: pnpm build
       - run: pnpm vitest run
