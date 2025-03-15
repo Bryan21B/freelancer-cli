@@ -20,28 +20,35 @@ jobs:
           node-version: "20.x"
           cache: "pnpm"
 
+      - name: Clear pnpm store
+        run: pnpm store prune
+
       - name: Install dependencies
         run: |
           echo "Installing dependencies..."
+          echo "Removing existing Prisma packages..."
+          rm -rf node_modules/@prisma node_modules/.prisma
           pnpm install --no-frozen-lockfile
           echo "Installed versions:"
           pnpm list prisma @prisma/client
           echo "Node modules content:"
-          ls -la node_modules/.prisma
+          ls -la node_modules/.prisma || echo "No .prisma directory"
           ls -la node_modules/@prisma || echo "No @prisma directory"
 
       - name: Setup Prisma
         run: |
           echo "Setting up Prisma..."
           echo "Current working directory: $(pwd)"
-          echo "Installing latest Prisma..."
-          pnpm install prisma@latest @prisma/client@latest
+          echo "Installing specific Prisma version..."
+          pnpm remove prisma @prisma/client
+          pnpm install -D prisma@5.10.2
+          pnpm install @prisma/client@5.10.2
           echo "Installed Prisma versions:"
           pnpm list prisma @prisma/client
           echo "Generating Prisma client..."
-          pnpm dlx prisma generate
+          pnpm dlx prisma@5.10.2 generate
           echo "Checking generated client:"
-          ls -la node_modules/.prisma
+          ls -la node_modules/.prisma || echo "No .prisma directory"
           ls -la node_modules/@prisma/client || echo "No client directory"
 
       - name: Build
