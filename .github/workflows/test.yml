@@ -39,7 +39,7 @@ jobs:
           echo "Installed Prisma versions:"
           pnpm list prisma @prisma/client
           echo "Generating Prisma client..."
-          pnpm dlx prisma generate --debug
+          pnpm dlx prisma generate
           echo "Checking generated client:"
           ls -la node_modules/.prisma
           ls -la node_modules/@prisma/client || echo "No client directory"
