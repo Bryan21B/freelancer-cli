@@ -131,3 +131,7 @@ dist
 
 # database files
 *.db
+*.db-journal
+
+#mac files 
+.DS_STORE
