@@ -19,5 +19,5 @@ jobs:
           cache: "pnpm"
 
       - run: pnpm install
-      - run: tsc --clean && tsc --build
+      - run: tsc
       - run: pnpm vitest run
