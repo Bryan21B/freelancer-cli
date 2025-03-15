@@ -11,7 +11,7 @@ datasource db {
 model Client {
   id               Int       @id @default(autoincrement())
   createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt @default(now())
+  updatedAt        DateTime  @updatedAt
   firstName        String
   lastName         String
   companyName      String
@@ -27,14 +27,6 @@ model Client {
   projects         Project[]
 }
 
-enum InvoiceStatus {
-  DRAFT
-  VALIDATED
-  PAID
-  OVERDUE
-  CANCELLED
-}
-
 model Invoice {
   id            Int       @id @default(autoincrement())
   createdAt     DateTime  @default(now())
@@ -42,21 +34,21 @@ model Invoice {
   invoiceNumber Int       @unique
   totalCost     Int
   dueDate       DateTime
-  status        InvoiceStatus @default(DRAFT)
+  status        String    @default("DRAFT")
   validatedAt   DateTime?
   clientId      Int
   projectId     Int
   archivedAt    DateTime?
   isArchived    Boolean   @default(false)
-  project       Project   @relation(fields: [projectId], references: [id])
   client        Client    @relation(fields: [clientId], references: [id])
+  project       Project   @relation(fields: [projectId], references: [id])
 }
 
 model Project {
   id          Int       @id @default(autoincrement())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  archivedAt  DateTime? 
+  archivedAt  DateTime?
   isArchived  Boolean   @default(false)
   name        String
   description String?

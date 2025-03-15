@@ -3,6 +3,7 @@ import {
   createClient,
   getAllClients,
   getClientById,
+  unarchiveClientById,
   updateClientById,
 } from "../../src/services/clientService";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -133,6 +134,7 @@ describe("Client Service", () => {
 
     it("should return all non-archived clients by default", async () => {
       const clients = await getAllClients();
+
       expect(clients).toBeInstanceOf(Array);
       expect(clients.length).toBe(3);
       expect(clients.every((client) => !client.isArchived)).toBe(true);
@@ -243,6 +245,40 @@ describe("Client Service", () => {
 
     it("should throw when there is no client", async () => {
       await expect(archiveClientById(999)).rejects.toThrow();
+    });
+  });
+
+  describe("unarchiveClientById", () => {
+    beforeEach(async () => {
+      await createClientWithInvoicesAndProjects();
+      await db.client.update({
+        where: { id: 1 },
+        data: { isArchived: true, archivedAt: new Date() },
+      });
+    });
+
+    it("should mark the client as unarchived", async () => {
+      const client = await unarchiveClientById(1);
+      expect(client.isArchived).toBe(false);
+      expect(client.archivedAt).toBeNull();
+    });
+
+    it("should throw when the client is not found", async () => {
+      await expect(unarchiveClientById(23)).rejects.toThrow();
+    });
+
+    it("should not modify the client's projects", async () => {
+      await unarchiveClientById(1);
+      const projects = await db.project.findMany({ where: { clientId: 1 } });
+      projects.forEach((project) => expect(project.isArchived).toBe(false));
+      projects.forEach((project) => expect(project.archivedAt).toBeNull());
+    });
+
+    it("should not modify the client's invoices", async () => {
+      await unarchiveClientById(1);
+      const invoices = await db.invoice.findMany({ where: { clientId: 1 } });
+      invoices.forEach((invoice) => expect(invoice.isArchived).toBe(false));
+      invoices.forEach((invoice) => expect(invoice.archivedAt).toBeNull());
     });
   });
 });

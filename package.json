@@ -9,8 +9,10 @@
     "prepare": "husky",
     "fix-link": "pnpm unlink && pnpm link",
     "build": "rm -rf dist && tsc --build --force ",
-    "wipe-db": "rm -rf freelancer-cli.db && rm -rf src/db/migrations",
-    "migrate": "pnpm prisma generate && pnpm prisma migrate dev"
+    "db:wipe": "rm -rf freelancer-cli.db && rm -rf src/db/migrations",
+    "db:migrate": "pnpm prisma generate && pnpm prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "pnpm db:wipe && pnpm db:migrate && pnpm db:seed"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +22,6 @@
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@eslint/js": "^9.22.0",
-    "@types/lodash": "^4.17.16",
     "@types/node": "^22.13.10",
     "@types/validator": "^13.12.2",
     "cz-conventional-changelog": "^3.3.0",
@@ -47,9 +48,12 @@
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "conf": "^13.1.0",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "easy-table": "1.2.0",
+    "easy-tables": "^0.2.1",
     "execa": "^9.5.2",
-    "lodash": "^4.17.21",
+    "radash": "^12.1.0",
     "zod": "^3.24.2"
   },
   "pnpm": {

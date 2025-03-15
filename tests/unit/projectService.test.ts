@@ -19,7 +19,7 @@ import {
 import { NewProject } from "../../src/types/models";
 import { createProjectData } from "../helpers";
 import { db } from "../../prisma";
-import { isEmpty } from "lodash";
+import { isEmpty } from "radash";
 
 vi.mock("@prisma/client");
 

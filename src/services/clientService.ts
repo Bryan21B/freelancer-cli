@@ -1,8 +1,8 @@
-import { Client, NewClient, newClientSchema } from "../types/models";
+import { Client, NewClient, newClientSchema } from "../types/models.js";
 
 import { Prisma } from "@prisma/client";
-import { db } from "../../prisma/index";
-import { isEmpty } from "lodash";
+import { db } from "../../prisma/index.js";
+import { isEmpty } from "radash";
 import { z } from "zod";
 
 /**
@@ -138,4 +138,20 @@ export const archiveClientById = async (
 
   await db.$transaction([archiveInvoices, archiveProjects, archiveClient]);
   return archiveClient;
+};
+
+/**
+ * Unarchives a client by ID by setting isArchived to false and clearing archivedAt
+ * @param {Client["id"]} clientId - The ID of the client to unarchive
+ * @returns {Promise<Client>} The unarchived client
+ * @throws {Error} If no client is found with the given ID
+ */
+export const unarchiveClientById = async (
+  clientId: Client["id"]
+): Promise<Client> => {
+  const client = await db.client.update({
+    where: { id: clientId },
+    data: { isArchived: false, archivedAt: null },
+  });
+  return client;
 };
