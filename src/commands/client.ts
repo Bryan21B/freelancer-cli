@@ -1,11 +1,14 @@
 import { FormattedClient, formatClientObject } from "../utils/formatters.js";
-import { getAllClients, getClientById } from "../services/clientService.js";
+import {
+  archiveClientById,
+  getAllClients,
+  getClientById,
+} from "../services/clientService.js";
 
 import { Client } from "../types/models.js";
 import { Command } from "commander";
 import Table from "easy-table";
 import chalk from "chalk";
-import { config } from "../utils/cli-config.js";
 import { toInt } from "radash";
 
 export function createClientCommand(): Command {
@@ -46,6 +49,15 @@ export function createClientCommand(): Command {
       });
       t.newRow();
       console.log(t.printTransposed());
+    });
+
+  clientCommand
+    .command("archive")
+    .description("Archive a client by its id")
+    .argument("<id>", "ID of the client to archive")
+    .action(async (rawId: string) => {
+      const client = await archiveClientById(toInt(rawId));
+      console.log(chalk.green(`${client.companyName} is archived`));
     });
 
   return clientCommand;
