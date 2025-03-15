@@ -8,6 +8,7 @@ export type FormattedClient = {
   Address: string;
   Phone: string;
   Created: string;
+  Updated: string;
   Archived?: string;
   Id?: number;
 };
@@ -34,6 +35,7 @@ export const formatClientObject = (
     }`,
     Phone: `${client.phoneCountryCode || ""} ${client.phoneNumber || ""}`,
     Created: formatDistanceToNow(client.createdAt, { addSuffix: true }),
+    Updated: formatDistanceToNow(client.updatedAt, { addSuffix: true }),
     // Conditionally spread the Archived field only if archiveInfo param is true
     ...(includeArchiveInfo && {
       Archived: client.isArchived ? chalk.yellow("Yes") : "No",
