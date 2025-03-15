@@ -14,7 +14,6 @@ import {
 
 import { createClientData } from "../helpers";
 import { db } from "../../prisma";
-import { isEmpty } from "validator";
 
 vi.mock("@prisma/client");
 
