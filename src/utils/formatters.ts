@@ -1,4 +1,5 @@
 import { Client } from "../types/models.js";
+import Table from "easy-table";
 import chalk from "chalk";
 import { formatDistanceToNow } from "date-fns";
 
@@ -43,4 +44,24 @@ export const formatClientObject = (
   };
 
   return updatedClient;
+};
+
+export const formatClientTable = (
+  client: Client,
+  includeArchiveInfo: boolean = false,
+  includeId: boolean = true
+): string => {
+  const formattedClient = formatClientObject(
+    client,
+    includeArchiveInfo,
+    includeId
+  );
+  const t = new Table();
+
+  Object.entries(formattedClient).forEach(([key, value]) => {
+    t.cell(chalk.blue(key), value);
+  });
+  t.newRow();
+
+  return t.printTransposed();
 };
