@@ -1,8 +1,13 @@
-import { FormattedClient, formatClientObject } from "../utils/formatters.js";
+import {
+  FormattedClient,
+  formatClientObject,
+  formatClientTable,
+} from "../utils/formatters.js";
 import {
   archiveClientById,
   getAllClients,
   getClientById,
+  unarchiveClientById,
   updateClientById,
 } from "../services/clientService.js";
 
@@ -43,13 +48,7 @@ export function createClientCommand(): Command {
     .argument("<id>", "ID of the client to view")
     .action(async (rawId: string) => {
       const client: Client = await getClientById(toInt(rawId));
-      const formattedClient: FormattedClient = formatClientObject(client);
-      const t = new Table();
-      Object.entries(formattedClient).forEach(([key, value]) => {
-        t.cell(chalk.blue(key), value);
-      });
-      t.newRow();
-      console.log(t.printTransposed());
+      console.log(formatClientTable(client));
     });
 
   clientCommand
@@ -81,13 +80,17 @@ export function createClientCommand(): Command {
         chalk.green(`${client.companyName} updated with the details below\n`)
       );
 
-      const formattedClient: FormattedClient = formatClientObject(client);
-      const t = new Table();
-      Object.entries(formattedClient).forEach(([key, value]) => {
-        t.cell(chalk.blue(key), value);
-      });
-      t.newRow();
-      console.log(t.printTransposed());
+      console.log(formatClientTable(client));
+    });
+
+  clientCommand
+    .command("unarchive")
+    .description("Unarchive a client by its ID")
+    .argument("<id>", "ID of the client to unarchive")
+    .action(async (rawId: string) => {
+      const client = await unarchiveClientById(toInt(rawId));
+      console.log(chalk.green(`${client.companyName} is unarchived`));
+      console.log(formatClientTable(client));
     });
 
   return clientCommand;
