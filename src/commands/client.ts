@@ -3,6 +3,7 @@ import {
   archiveClientById,
   getAllClients,
   getClientById,
+  updateClientById,
 } from "../services/clientService.js";
 
 import { Client } from "../types/models.js";
@@ -58,6 +59,35 @@ export function createClientCommand(): Command {
     .action(async (rawId: string) => {
       const client = await archiveClientById(toInt(rawId));
       console.log(chalk.green(`${client.companyName} is archived`));
+    });
+
+  clientCommand
+    .command("update")
+    // TODO Add validation
+    .description("Update a client by its id")
+    .argument("<id>", "ID of the client to update")
+    .option("--address <addressStreet>", "address of the client")
+    .option("--zip <addressZip>", "zip of the client")
+    .option("--city <addressCity>", "zip of the client")
+    .option("--email <email>", "client's email")
+    .option("--company <company>", "client's company")
+    .option("--phone <phone>", "client's phone number")
+    .option("--first-name <firstName>", "client's first name")
+    .option("--last-name <lastName>", "client's last name")
+    .action(async (rawId: string, options) => {
+      console.log(JSON.stringify(options));
+      const client = await updateClientById(toInt(rawId), options);
+      console.log(
+        chalk.green(`${client.companyName} updated with the details below\n`)
+      );
+
+      const formattedClient: FormattedClient = formatClientObject(client);
+      const t = new Table();
+      Object.entries(formattedClient).forEach(([key, value]) => {
+        t.cell(chalk.blue(key), value);
+      });
+      t.newRow();
+      console.log(t.printTransposed());
     });
 
   return clientCommand;
