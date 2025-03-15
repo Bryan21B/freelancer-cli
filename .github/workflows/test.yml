@@ -19,5 +19,7 @@ jobs:
           cache: "pnpm"
 
       - run: pnpm install
-      - run: tsc
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
+      - run: pnpm build
       - run: pnpm vitest run
