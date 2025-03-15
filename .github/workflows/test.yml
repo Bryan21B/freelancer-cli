@@ -40,11 +40,12 @@ jobs:
         run: |
           echo "Setting up Prisma..."
           echo "Current working directory: $(pwd)"
-          pnpm install -D prisma@5.10.2
-          pnpm install @prisma/client@5.10.2
+          pnpm install prisma
+          pnpm install @prisma/client
           echo "Installed Prisma versions:"
           pnpm list prisma @prisma/client
           echo "Generating Prisma client..."
+          rm -rf node_modules/.prisma/client
           pnpm prisma generate
           echo "Checking generated client:"
           ls -la node_modules/.prisma || echo "No .prisma directory"
