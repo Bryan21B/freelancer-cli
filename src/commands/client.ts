@@ -26,9 +26,11 @@ export function createClientCommand(): Command {
     .description("List all clients in a table format")
     .action(async () => {
       const t = new Table();
-      const clients: FormattedClient[] = (await getAllClients()).map(
-        (client) => ({
-          ...formatClientObject(client),
+      const clients: FormattedClient[] = (await getAllClients()).map((client) =>
+        formatClientObject(client, {
+          includeId: true,
+          includeEmail: true,
+          includeAddress: false,
         })
       );
       clients.forEach((client) => {
@@ -49,7 +51,16 @@ export function createClientCommand(): Command {
     .argument("<id>", "ID of the client to view")
     .action(async (rawId: string) => {
       const client: Client = await getClientById(toInt(rawId));
-      console.log(formatClientTable(client));
+      console.log(
+        formatClientTable(client, {
+          includeId: true,
+          includeArchiveInfo: true,
+          includeTimestamps: true,
+          includeEmail: true,
+          includePhone: true,
+          includeAddress: true,
+        })
+      );
     });
 
   clientCommand
@@ -68,7 +79,7 @@ export function createClientCommand(): Command {
     .action(async (rawId: string) => {
       const client = await unarchiveClientById(toInt(rawId));
       console.log(chalk.green(`${client.companyName} is unarchived`));
-      console.log(formatClientTable(client));
+      console.log(formatClientTable(client, { includeArchiveInfo: true }));
     });
 
   clientCommand
