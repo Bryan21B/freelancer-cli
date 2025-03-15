@@ -5,7 +5,7 @@ import { createClientCommand } from "./commands/client.js";
 import { initCommand } from "./commands/init.js";
 
 const program = new Command();
-const version: string = "0.0.3";
+const version: string = "0.0.4";
 
 program
   .name("freelancer-cli")
